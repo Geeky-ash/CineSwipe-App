@@ -2,9 +2,9 @@ import { Link, useLocation } from 'react-router-dom';
 
 const NAV_ITEMS = [
   { path: '/',           icon: 'play_circle', label: 'Feed'      },
-  { path: '/cinesnaps', icon: 'theaters',    label: 'CineSnaps' },
-  { path: '/discover',  icon: 'explore',     label: 'Discover'  },
-  { path: '/profile',   icon: 'person',      label: 'Profile'   },
+  { path: '/cinesnaps',  icon: 'theaters',    label: 'CineSnaps' },
+  { path: '/clubs',      icon: 'groups',      label: 'Clubs'     },
+  { path: '/profile',    icon: 'person',      label: 'Profile'   },
 ];
 
 export default function BottomNav() {

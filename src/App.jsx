@@ -3,7 +3,7 @@ import { Suspense, lazy } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { VibeProvider } from './contexts/VibeContext';
 import Feed from './pages/Feed';
-import Discover from './pages/Discover';
+import Clubs from './pages/Clubs';
 import Login from './pages/Login';
 import MovieDetails from './pages/MovieDetails';
 import BottomNav from './components/BottomNav';
@@ -34,7 +34,8 @@ function AppRoutes() {
           <Route path="/login"      element={session ? <Navigate to="/" replace /> : <Login />} />
           <Route path="/"           element={<Feed />} />
           <Route path="/cinesnaps"  element={<CineSnaps />} />
-          <Route path="/discover"   element={<Discover />} />
+          <Route path="/clubs"      element={<Clubs />} />
+          <Route path="/discover"   element={<Navigate to="/clubs" replace />} />
           <Route path="/movie/:id"  element={<MovieDetails />} />
           <Route path="/profile"    element={session ? <Profile /> : <Navigate to="/login" replace />} />
           <Route path="*"           element={<Navigate to="/" replace />} />

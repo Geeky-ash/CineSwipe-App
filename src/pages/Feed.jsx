@@ -371,7 +371,7 @@ export default function Feed() {
                     <h2 className="font-headline text-3xl font-black tracking-tight drop-shadow-md">Talk of the Town</h2>
                     <p className="text-on-surface-variant text-sm font-medium mt-1">Trending cinema near you</p>
                   </div>
-                  <button onClick={() => navigate('/discover')} className="text-primary text-xs font-black uppercase tracking-widest bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20">
+                  <button onClick={() => navigate('/clubs')} className="text-primary text-xs font-black uppercase tracking-widest bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20">
                     View All
                   </button>
                 </div>
@@ -463,8 +463,8 @@ export default function Feed() {
                 ))}
               </div>
               
-              <button onClick={() => navigate('/discover')} className="w-full mt-8 py-4 rounded-xl border border-outline-variant/20 font-black text-sm text-on-surface-variant hover:bg-surface-container hover:text-white transition-colors shadow-sm">
-                SEE THE TOP 100
+              <button onClick={() => navigate('/clubs')} className="w-full mt-8 py-4 rounded-xl border border-outline-variant/20 font-black text-sm text-on-surface-variant hover:bg-surface-container hover:text-white transition-colors shadow-sm">
+                JOIN THE COMMUNITY
               </button>
             </motion.div>
 
