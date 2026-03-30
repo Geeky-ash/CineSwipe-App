@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body bg-surface-container-lowest text-on-surface antialiased;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: rgba(31, 31, 31, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .neon-glow {
+    box-shadow: 0 0 20px rgba(255, 177, 195, 0.2);
+  }
+  .vertical-gradient-overlay {
+    background: linear-gradient(to top, #0e0e0e 0%, rgba(14, 14, 14, 0.8) 30%, transparent 100%);
+  }
+  .side-gradient-overlay {
+    background: linear-gradient(to left, rgba(14, 14, 14, 0.4) 0%, transparent 100%);
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .masonry-grid {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+}
