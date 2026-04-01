@@ -7,7 +7,7 @@ import Feed from './pages/Feed';
 import Clubs from './pages/Clubs';
 import Login from './pages/Login';
 import MovieDetails from './pages/MovieDetails';
-import BottomNav from './components/BottomNav';
+import TopNav from './components/TopNav';
 import VibeCheck from './components/VibeCheck';
 import StitchLoader from './components/StitchLoader';
 
@@ -83,9 +83,9 @@ export default function App() {
       <AuthProvider>
         <VibeProvider>
           <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface">
+            <TopNav />
             <AnimatedRoutes />
             <VibeCheck />
-            <BottomNav />
           </div>
         </VibeProvider>
       </AuthProvider>

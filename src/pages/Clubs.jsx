@@ -2,16 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { searchMovies } from '../services/tmdb';
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   FILM CLUBS — STITCH "AURA NOIR" DESIGN
-   ✦ No-Line Rule — tonal shifts only, NEVER 1px solid borders
-   ✦ Immersive Cards — glass + tonal layering + inner-glow
-   ✦ Neon gradient CTAs — #ff8aa9 → #e4006c at 135°
-   ✦ Tertiary (#ab9fff) for success/join states
-   ✦ Ghost border fallback — outline-variant (#484847) at 15%
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 const MOCK_CLUBS = [
   { id: 'c1', name: 'Sci-Fi Seekers', members: '12.4k', backdrop: 'https://image.tmdb.org/t/p/w780/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg', avatar: '🛸', activeUsers: 342, description: 'Discussing Interstellar, Dune, and the future of cinema.' },
@@ -35,7 +25,6 @@ const SUGGESTED_FRIENDS = [
   { id: 'u3', name: 'David K.', sharedTaste: '75% Match', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David' },
 ];
 
-/* ── Immersive Club Card ── */
 function ImmersiveCard({ club }) {
   const [joined, setJoined] = useState(false);
 
@@ -58,22 +47,11 @@ function ImmersiveCard({ club }) {
 
   return (
     <div className="relative group rounded-2xl overflow-hidden stitch-card cursor-pointer min-h-[220px]">
-      {/* Background Image */}
       <img src={club.backdrop} alt={club.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70" />
-
-      {/* Tonal gradient — surface-container-lowest fade */}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+      <div className="absolute inset-0" style={{ background: 'rgba(38, 38, 38, 0.4)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }} />
 
-      {/* Glass layer — surface-variant 40% + 24px blur */}
-      <div className="absolute inset-0" style={{
-        background: 'rgba(38, 38, 38, 0.4)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-      }} />
-
-      {/* Content */}
       <div className="relative p-6 h-full flex flex-col justify-end">
-        {/* Top Header */}
         <div className="absolute top-5 left-5 right-5 flex justify-between items-start">
           <div className="w-12 h-12 rounded-full bg-surface-variant/30 backdrop-blur-xl flex items-center justify-center text-2xl">
             {club.avatar}
@@ -84,25 +62,19 @@ function ImmersiveCard({ club }) {
           </div>
         </div>
 
-        {/* Info & Action */}
         <div className="mt-14">
           <h3 className="font-headline text-2xl font-black text-on-surface leading-tight">{club.name}</h3>
           <p className="text-on-surface-variant text-sm mt-1 line-clamp-2 max-w-[85%] font-body">{club.description}</p>
-
           <div className="flex items-center justify-between mt-5">
             <div className="flex items-center gap-4 text-xs font-label font-bold text-on-surface/70 tracking-widest uppercase">
               <span className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px]">group</span> {club.members}
               </span>
             </div>
-
-            {/* Primary-Glow Join Button */}
             <button
               onClick={handleJoin}
               className={`relative overflow-hidden px-5 py-2 rounded-full font-bold text-sm transition-all duration-300 ${
-                joined
-                  ? 'bg-tertiary/20 text-tertiary ghost-border'
-                  : 'neon-btn hover:scale-105'
+                joined ? 'bg-tertiary/20 text-tertiary ghost-border' : 'neon-btn hover:scale-105'
               }`}
             >
               <AnimatePresence mode="popLayout" initial={false}>
@@ -124,99 +96,55 @@ function ImmersiveCard({ club }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
 export default function Clubs() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Discover');
-  const [query, setQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [searching, setSearching] = useState(false);
-
-  /* Search handler */
-  const handleSearch = async (value) => {
-    setQuery(value);
-    if (!value.trim()) { setSearchResults([]); return; }
-    setSearching(true);
-    const results = await searchMovies(value);
-    setSearchResults(results);
-    setSearching(false);
-  };
 
   return (
     <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface overflow-x-hidden pb-32 lg:pb-0">
 
-      {/* ── Top Nav ── */}
-      <header className="sticky top-0 z-50 pt-4 pb-3"
-        style={{
-          background: 'linear-gradient(to bottom, #000000 0%, rgba(0,0,0,0.9) 60%, transparent 100%)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-        }}
-      >
-        <div className="max-w-[1800px] mx-auto px-4 lg:px-12 flex flex-col items-center">
-          {/* Title */}
-          <h1 className="font-headline text-2xl font-bold tracking-tight mb-4 self-start">Film Clubs</h1>
-
-          {/* Search Bar */}
-          <div className="relative w-full mb-4">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              {searching
-                ? <span className="material-symbols-outlined text-primary text-sm animate-spin">autorenew</span>
-                : <span className="material-symbols-outlined text-on-surface-variant/50 text-[20px]">search</span>
-              }
-            </div>
-            <input
-              className="stitch-input"
-              placeholder="Search clubs, movies..."
-              type="text"
-              value={query}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
-
-          {/* Sub-Tabs — NO border-b (No-Line Rule) */}
-          <div className="flex gap-8 w-full overflow-x-auto hide-scrollbar px-2 pb-1">
-            {['Discover', 'Joined', 'Trending'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`relative pb-3 text-sm font-bold transition-colors whitespace-nowrap ${
-                  activeTab === tab ? 'text-on-surface' : 'text-on-surface-variant hover:text-on-surface/80'
-                }`}
-              >
-                {tab}
-                {activeTab === tab && (
-                  <motion.div
-                    layoutId="clubTabIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 neon-gradient rounded-t-full"
-                    style={{ boxShadow: '0 0 8px rgba(255,138,169,0.8)' }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </header>
-
-      {/* ── Conversation Pills ── */}
-      <div className="mt-2 mb-8 max-w-[1800px] mx-auto px-4 lg:px-12 w-full overflow-hidden">
-        <div className="flex items-center gap-3 overflow-x-auto hide-scrollbar py-2">
-          {MOCK_CONVERSATIONS.map((msg) => (
-            <div key={msg.id} className="flex-shrink-0 flex items-center gap-2.5 bg-surface-container/40 rounded-full px-4 py-2 hover:bg-surface-container-high transition-colors cursor-pointer backdrop-blur-sm">
-              <span className={`material-symbols-outlined text-[16px] ${msg.color}`}>{msg.icon}</span>
-              <span className="text-xs font-semibold text-on-surface/90 whitespace-nowrap font-body">{msg.text}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* ── 3:1 RESPONSIVE GRID ── */}
-      <div className="lg:grid lg:grid-cols-4 max-w-[1800px] mx-auto relative lg:min-h-[70dvh] gap-8 xl:gap-12 px-4 lg:px-12">
+      <div className="lg:grid lg:grid-cols-4 max-w-[1800px] mx-auto relative lg:min-h-[100dvh]">
 
-        {/* ── Immersive Cards Grid (3fr) ── */}
-        <div className="lg:col-span-3 pb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-headline text-2xl lg:text-3xl font-black tracking-tight">Featured Clubs</h2>
+        {/* ── Main Column (75%) ── */}
+        <main className="col-span-3 px-4 lg:px-12 pt-[84px] lg:pt-[100px] pb-10 relative z-10 w-full">
+          
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-4">
+            <h1 className="font-headline text-3xl font-bold tracking-tight">Film Clubs</h1>
+            
+            {/* Sub-Tabs */}
+            <div className="flex gap-8 overflow-x-auto hide-scrollbar px-2">
+              {['Discover', 'Joined', 'Trending'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative pb-2 text-sm font-bold transition-colors whitespace-nowrap ${
+                    activeTab === tab ? 'text-on-surface' : 'text-on-surface-variant hover:text-on-surface/80'
+                  }`}
+                >
+                  {tab}
+                  {activeTab === tab && (
+                    <motion.div
+                      layoutId="clubTabIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 neon-gradient rounded-full"
+                      style={{ boxShadow: '0 0 8px rgba(255,138,169,0.8)' }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Conversation Pills */}
+          <div className="mb-8 w-full overflow-hidden">
+            <div className="flex items-center gap-3 overflow-x-auto hide-scrollbar py-2">
+              {MOCK_CONVERSATIONS.map((msg) => (
+                <div key={msg.id} className="flex-shrink-0 flex items-center gap-2.5 bg-surface-container/40 rounded-full px-4 py-2 hover:bg-surface-container-high transition-colors cursor-pointer backdrop-blur-sm">
+                  <span className={`material-symbols-outlined text-[16px] ${msg.color}`}>{msg.icon}</span>
+                  <span className="text-xs font-semibold text-on-surface/90 whitespace-nowrap font-body">{msg.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
@@ -241,21 +169,27 @@ export default function Clubs() {
               )}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </main>
 
-        {/* ── Right Sidebar (1fr) — No border-l (No-Line Rule) ── */}
-        <div className="lg:col-span-1 lg:sticky lg:top-32 lg:h-max pt-8 lg:pt-0 lg:pl-8">
-          <h2 className="font-headline text-xl font-black tracking-tight mb-6 hidden lg:block">Discover Peers</h2>
+        {/* ── NEON DIVIDER ── */}
+        <div className="hidden lg:block absolute left-[75%] top-0 bottom-0 w-[1px] z-30 pointer-events-none"
+          style={{ background: `linear-gradient(to bottom, transparent, rgba(255,138,169,0.3), transparent)` }}
+        />
 
-          {/* Suggested Friends */}
-          <div className="bg-gradient-to-br from-surface-container-high to-surface-container p-6 rounded-2xl inner-glow relative overflow-hidden"
-            style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}
-          >
+        {/* ── Sidebar Column (25%) ── */}
+        <aside className="col-span-1 lg:sticky lg:top-0 lg:h-[100dvh] lg:overflow-y-auto px-4 lg:px-8 pt-8 lg:pt-[100px] pb-32 z-20"
+          style={{ background: 'rgba(19, 19, 19, 0.3)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', scrollbarWidth: 'none' }}
+        >
+          <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-6 hidden lg:block">
+            Discover Peers
+          </h2>
+
+          <div className="bg-gradient-to-br from-surface-container-high to-surface-container p-6 rounded-2xl inner-glow relative overflow-hidden shadow-2xl">
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/8 rounded-full blur-[30px] pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-tertiary/8 rounded-full blur-[30px] pointer-events-none" />
 
-            <h3 className="font-headline font-bold text-on-surface mb-5 relative z-10 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">person_add</span>
+            <h3 className="font-headline font-bold text-sm uppercase tracking-widest text-on-surface mb-5 relative z-10 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[18px]">person_add</span>
               Suggested Friends
             </h3>
 
@@ -281,9 +215,8 @@ export default function Clubs() {
             </button>
           </div>
 
-          {/* Create Club */}
           <div className="mt-6 p-6 rounded-2xl ghost-border bg-surface-container/30 hover:bg-surface-container transition-colors hidden lg:block cursor-pointer">
-            <h3 className="font-headline font-bold text-sm text-on-surface-variant mb-2">Create your own Club?</h3>
+            <h3 className="font-headline font-bold text-sm uppercase tracking-widest text-on-surface-variant mb-2">Create your own Club?</h3>
             <p className="text-xs text-on-surface-variant/70 leading-relaxed max-w-[90%] font-body">
               Launch a community, host watch parties, and dictate the vibe.
             </p>
@@ -291,7 +224,8 @@ export default function Clubs() {
               Start Building <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
             </div>
           </div>
-        </div>
+        </aside>
+
       </div>
     </div>
   );
