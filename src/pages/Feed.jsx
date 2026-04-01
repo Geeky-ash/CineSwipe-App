@@ -108,10 +108,17 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
         <div className="relative w-full h-full rounded-[32px] overflow-hidden stitch-card shadow-2xl"
           style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.1), 0 30px 60px -15px ${color}50` }}
         >
+          {/* Mobile Vertical Poster */}
           <img
             src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
             alt={movie.title}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none lg:hidden"
+          />
+          {/* Desktop Horizontal Cinematic Backdrop */}
+          <img
+            src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path || movie.poster_path}`}
+            alt={movie.title}
+            className="hidden lg:block absolute inset-0 w-full h-full object-cover pointer-events-none"
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10 pointer-events-none" />
@@ -285,7 +292,7 @@ export default function Feed() {
             <div className="col-span-3 lg:pb-20 relative z-10 w-full lg:w-auto h-[100dvh] lg:h-auto flex flex-col justify-center pt-[140px] pb-[80px] lg:pt-0 lg:pb-0">
               
               <section className="relative w-[calc(100vw-48px)] lg:w-full h-[65vh] lg:h-[70vh] 2xl:h-[75vh] mx-auto z-20 flex items-center justify-center lg:mt-[120px] lg:sticky lg:top-[120px]">
-                <div className="relative w-full h-full lg:max-w-md xl:max-w-[400px] 2xl:max-w-[450px] mx-auto">
+                <div className="relative w-full h-full lg:max-w-2xl xl:max-w-4xl 2xl:max-w-5xl mx-auto">
                   {heroMovies.length === 0 ? (
                     <div className="w-full h-full flex flex-col items-center justify-center glass-panel rounded-[32px] text-center px-6 ghost-border">
                       <span className="text-5xl mb-4">🎬</span>
