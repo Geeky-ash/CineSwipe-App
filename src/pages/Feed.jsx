@@ -284,8 +284,8 @@ export default function Feed() {
             {/* On Mobile: Pure swipe (100vw, 24px margins) using absolute positioning or flex container */}
             <div className="col-span-3 lg:pb-20 relative z-10 w-full lg:w-auto h-[100dvh] lg:h-auto flex flex-col justify-center pt-[140px] pb-[80px] lg:pt-0 lg:pb-0">
               
-              <section className="relative w-[calc(100vw-48px)] lg:w-full h-[65vh] lg:h-[75vh] 2xl:h-[70vh] mx-auto z-20 flex items-center justify-center lg:sticky lg:top-14">
-                <div className="relative w-full h-full lg:max-w-md xl:max-w-2xl mx-auto">
+              <section className="relative w-[calc(100vw-48px)] lg:w-full h-[65vh] lg:h-[70vh] 2xl:h-[75vh] mx-auto z-20 flex items-center justify-center lg:mt-[120px] lg:sticky lg:top-[120px]">
+                <div className="relative w-full h-full lg:max-w-md xl:max-w-[400px] 2xl:max-w-[450px] mx-auto">
                   {heroMovies.length === 0 ? (
                     <div className="w-full h-full flex flex-col items-center justify-center glass-panel rounded-[32px] text-center px-6 ghost-border">
                       <span className="text-5xl mb-4">🎬</span>
