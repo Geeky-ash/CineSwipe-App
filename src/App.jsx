@@ -8,7 +8,6 @@ import Clubs from './pages/Clubs';
 import Login from './pages/Login';
 import MovieDetails from './pages/MovieDetails';
 import TopNav from './components/TopNav';
-import IconSidebar from './components/IconSidebar';
 import BottomNav from './components/BottomNav';
 import VibeCheck from './components/VibeCheck';
 import StitchLoader from './components/StitchLoader';
@@ -80,12 +79,8 @@ function AnimatedRoutes() {
 }
 
 function MainLayout() {
-  const location = useLocation();
-  const isSwipePage = location.pathname === '/';
-
   return (
-    <div className={`w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface transition-all duration-300 ${!isSwipePage ? 'lg:pl-[80px]' : ''}`}>
-      {!isSwipePage && <IconSidebar />}
+    <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface transition-all duration-300">
       <TopNav />
       <div className="pb-20 lg:pb-0">
         <AnimatedRoutes />

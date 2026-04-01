@@ -109,7 +109,7 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
           style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.1), 0 30px 60px -15px ${color}50` }}
         >
           <img
-            src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path || movie.poster_path}`}
+            src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
             alt={movie.title}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
           />
@@ -134,7 +134,7 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
               </span>
             </div>
             
-            <h2 className="font-headline text-4xl lg:text-5xl font-black leading-tight text-white mb-2 tracking-tighter uppercase whitespace-normal break-words">
+            <h2 className="font-headline text-3xl lg:text-5xl font-black leading-tight text-white mb-2 tracking-tighter uppercase whitespace-normal break-words">
               {movie.title}
             </h2>
             
