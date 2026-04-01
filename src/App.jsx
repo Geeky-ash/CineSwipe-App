@@ -79,20 +79,29 @@ function AnimatedRoutes() {
   );
 }
 
+function MainLayout() {
+  const location = useLocation();
+  const isSwipePage = location.pathname === '/';
+
+  return (
+    <div className={`w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface transition-all duration-300 ${!isSwipePage ? 'lg:pl-[80px]' : ''}`}>
+      {!isSwipePage && <IconSidebar />}
+      <TopNav />
+      <div className="pb-20 lg:pb-0">
+        <AnimatedRoutes />
+      </div>
+      <BottomNav />
+      <VibeCheck />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <VibeProvider>
-          <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface lg:pl-[80px]">
-            <IconSidebar />
-            <TopNav />
-            <div className="pb-20 lg:pb-0">
-              <AnimatedRoutes />
-            </div>
-            <BottomNav />
-            <VibeCheck />
-          </div>
+          <MainLayout />
         </VibeProvider>
       </AuthProvider>
     </BrowserRouter>
