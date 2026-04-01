@@ -282,9 +282,9 @@ export default function Feed() {
             
             {/* ─── LEFT COLUMN: 75% (3fr) Swipe Area ─── */}
             {/* On Mobile: Pure swipe (100vw, 24px margins) using absolute positioning or flex container */}
-            <div className="col-span-3 lg:pb-20 relative z-10 w-full lg:w-auto h-[100dvh] lg:h-auto flex flex-col justify-center">
+            <div className="col-span-3 lg:pb-20 relative z-10 w-full lg:w-auto h-[100dvh] lg:h-auto flex flex-col justify-center pt-[140px] pb-[80px] lg:pt-0 lg:pb-0">
               
-              <section className="relative w-[calc(100vw-48px)] lg:w-full h-[65vh] lg:h-[75vh] 2xl:h-[70vh] mx-auto z-20 flex items-center justify-center mt-12 lg:mt-0 lg:sticky lg:top-14">
+              <section className="relative w-[calc(100vw-48px)] lg:w-full h-[65vh] lg:h-[75vh] 2xl:h-[70vh] mx-auto z-20 flex items-center justify-center lg:sticky lg:top-14">
                 <div className="relative w-full h-full lg:max-w-md xl:max-w-2xl mx-auto">
                   {heroMovies.length === 0 ? (
                     <div className="w-full h-full flex flex-col items-center justify-center glass-panel rounded-[32px] text-center px-6 ghost-border">
