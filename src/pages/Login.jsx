@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { fetchTrendingMovies } from '../services/tmdb';
+
+const BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
 
 export default function Login() {
   const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
@@ -12,6 +15,18 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [bgImage, setBgImage] = useState('');
+
+  useEffect(() => {
+    // Fetch a dynamic trending poster for the background
+    fetchTrendingMovies().then(movies => {
+      if (movies && movies.length > 0) {
+        // Pick a random trending movie
+        const randomMovie = movies[Math.floor(Math.random() * Math.min(5, movies.length))];
+        setBgImage(`${BACKDROP_BASE}${randomMovie.backdrop_path || randomMovie.poster_path}`);
+      }
+    }).catch(console.error);
+  }, []);
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -50,28 +65,50 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-surface-container-lowest overflow-hidden relative">
+    <div 
+      className="min-h-[100dvh] w-full flex items-center justify-center overflow-hidden relative"
+      style={{
+        backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      {/* Heavy Blur & Darken Overlay for Background */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0" 
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+          backdropFilter: 'blur(40px)',
+          WebkitBackdropFilter: 'blur(40px)'
+        }} 
+      />
 
-      {/* Ambient glows */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/8 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-tertiary/5 rounded-full blur-[80px]" />
-      </div>
-
-      <div className="relative w-full max-w-sm mx-auto px-6">
+      <div className="relative w-full max-w-sm mx-auto px-6 z-10 flex flex-col items-center justify-center">
         {/* Logo */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl neon-gradient mb-4 neon-glow">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl neon-gradient mb-4 neon-glow shadow-[0_0_30px_rgba(255,138,169,0.3)]">
             <span className="material-symbols-outlined text-on-primary-fixed text-3xl filled">movie</span>
           </div>
-          <h1 className="font-headline text-4xl font-bold tracking-tight">CineSwipe</h1>
-          <p className="text-on-surface-variant text-sm mt-2 font-body">Your cinematic discovery platform</p>
+          <h1 className="font-headline text-4xl font-bold tracking-tight text-white shadow-sm">
+            Welcome Back
+          </h1>
+          <p className="text-on-surface-variant text-sm mt-2 font-body tracking-wide drop-shadow-md">
+            Your cinematic discovery platform
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="glass-panel rounded-2xl p-8 ghost-border">
+        {/* Auth Card */}
+        <div 
+          className="rounded-[24px] p-8 w-full shadow-2xl"
+          style={{
+            background: 'rgba(73, 69, 79, 0.2)', // surface_variant 20%
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(202, 196, 208, 0.15)', // outline_variant ghost border
+          }}
+        >
           {/* Tab toggle */}
-          <div className="flex rounded-full bg-surface-container p-1 mb-6">
+          <div className="flex rounded-full bg-surface-container-highest/50 p-1 mb-8 ghost-border relative">
             <button
               onClick={() => { setMode('signin'); setError(''); setMessage(''); }}
               className={`flex-1 py-2 rounded-full text-sm font-label font-medium transition-all ${
@@ -135,7 +172,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-full neon-btn text-sm disabled:opacity-60"
+              className="w-full py-3.5 rounded-full neon-btn text-sm disabled:opacity-60 font-bold uppercase tracking-widest mt-2"
             >
               {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
             </button>
