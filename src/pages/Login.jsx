@@ -73,13 +73,13 @@ export default function Login() {
         backgroundPosition: 'center',
       }}
     >
-      {/* Heavy Blur & Darken Overlay for Background */}
+      {/* Moderate Blur & Darken Overlay for Background */}
       <div 
         className="absolute inset-0 pointer-events-none z-0" 
         style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.6)', 
-          backdropFilter: 'blur(40px)',
-          WebkitBackdropFilter: 'blur(40px)'
+          backgroundColor: 'rgba(0, 0, 0, 0.65)', 
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)'
         }} 
       />
 
