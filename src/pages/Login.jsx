@@ -83,7 +83,7 @@ export default function Login() {
         }} 
       />
 
-      <div className="relative w-full max-w-sm mx-auto px-6 z-10 flex flex-col items-center justify-center">
+      <div className="relative w-full max-w-sm mx-auto px-6 pt-[84px] z-10 flex flex-col items-center justify-center">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl neon-gradient mb-4 neon-glow shadow-[0_0_30px_rgba(255,138,169,0.3)]">
