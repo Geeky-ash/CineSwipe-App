@@ -59,6 +59,16 @@ export async function fetchTopRatedMovies() {
 }
 
 /**
+ * Fetch movies by a specific director (or person ID).
+ */
+export async function fetchMoviesByDirector(personId) {
+  const res = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_people=${personId}&sort_by=popularity.desc`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.results || [];
+}
+
+/**
  * Fetch movies filtered by genre IDs (for Vibe-Check mood filtering).
  * Uses TMDB /discover/movie with with_genres parameter.
  */
