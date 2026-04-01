@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { VibeProvider } from './contexts/VibeContext';
 import Feed from './pages/Feed';
@@ -8,42 +9,71 @@ import Login from './pages/Login';
 import MovieDetails from './pages/MovieDetails';
 import BottomNav from './components/BottomNav';
 import VibeCheck from './components/VibeCheck';
+import StitchLoader from './components/StitchLoader';
 
-const CineSnaps = lazy(() => import('./pages/CineSnaps'));
+const Discover = lazy(() => import('./pages/Discover'));
 const Profile = lazy(() => import('./pages/Profile'));
 
-function AppRoutes() {
+/* ── Spring-Bounce Page Transition ── */
+const pageVariants = {
+  initial: { opacity: 0, y: 16, scale: 0.99 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit:    { opacity: 0, y: -16, scale: 0.99 },
+};
+const pageTransition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 25,
+};
+
+function PageWrapper({ children }) {
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageTransition}
+      className="w-full min-h-[100dvh]"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function AnimatedRoutes() {
+  const location = useLocation();
   const { session } = useAuth();
 
   if (session === undefined) {
-    return (
-      <div className="h-[100dvh] w-full flex items-center justify-center bg-surface-container-lowest">
-        <span className="material-symbols-outlined animate-spin text-4xl text-primary">autorenew</span>
-      </div>
-    );
+    return <StitchLoader vibeLabel="Initializing…" />;
   }
 
   return (
-    <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface">
-      <Suspense fallback={
-        <div className="h-[100dvh] w-full flex flex-col items-center justify-center bg-surface-container-lowest text-on-surface">
-          <span className="material-symbols-outlined animate-spin text-4xl mb-4 text-primary">autorenew</span>
-        </div>
-      }>
-        <Routes>
-          <Route path="/login"      element={session ? <Navigate to="/" replace /> : <Login />} />
-          <Route path="/"           element={<Feed />} />
-          <Route path="/cinesnaps"  element={<CineSnaps />} />
-          <Route path="/clubs"      element={<Clubs />} />
-          <Route path="/discover"   element={<Navigate to="/clubs" replace />} />
-          <Route path="/movie/:id"  element={<MovieDetails />} />
-          <Route path="/profile"    element={session ? <Profile /> : <Navigate to="/login" replace />} />
-          <Route path="*"           element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
-      <VibeCheck />
-      <BottomNav />
-    </div>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={
+          session ? <Navigate to="/" replace /> : <PageWrapper><Login /></PageWrapper>
+        } />
+        <Route path="/" element={<PageWrapper><Feed /></PageWrapper>} />
+        <Route path="/discover" element={
+          <Suspense fallback={<StitchLoader vibeLabel="Loading Discover…" />}>
+            <PageWrapper><Discover /></PageWrapper>
+          </Suspense>
+        } />
+        <Route path="/clubs" element={<PageWrapper><Clubs /></PageWrapper>} />
+        <Route path="/movie/:id" element={<PageWrapper><MovieDetails /></PageWrapper>} />
+        <Route path="/profile" element={
+          session ? (
+            <Suspense fallback={<StitchLoader vibeLabel="Loading Profile…" />}>
+              <PageWrapper><Profile /></PageWrapper>
+            </Suspense>
+          ) : <Navigate to="/login" replace />
+        } />
+        <Route path="/cinesnaps" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
   );
 }
 
@@ -52,7 +82,11 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <VibeProvider>
-          <AppRoutes />
+          <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface">
+            <AnimatedRoutes />
+            <VibeCheck />
+            <BottomNav />
+          </div>
         </VibeProvider>
       </AuthProvider>
     </BrowserRouter>

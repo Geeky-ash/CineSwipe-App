@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -7,60 +8,96 @@ export default {
   theme: {
     extend: {
       colors: {
-        "surface-container": "#1f1f1f",
-        "secondary-fixed-dim": "#c8c6c5",
-        "error": "#ffb4ab",
-        "tertiary": "#00dbe9",
-        "surface-container-lowest": "#0e0e0e",
-        "surface-container-high": "#2a2a2a",
-        "on-surface": "#e2e2e2",
-        "inverse-primary": "#bb0058",
-        "outline-variant": "#5c3f45",
-        "surface-container-highest": "#353535",
-        "on-secondary": "#313030",
-        "primary-fixed": "#ffd9e0",
-        "on-secondary-container": "#bab8b7",
-        "on-tertiary-fixed-variant": "#004f54",
-        "on-secondary-fixed": "#1c1b1b",
-        "primary": "#ffb1c3",
-        "inverse-on-surface": "#303030",
-        "inverse-surface": "#e2e2e2",
-        "on-surface-variant": "#e5bcc4",
-        "on-background": "#e2e2e2",
-        "on-error-container": "#ffdad6",
-        "tertiary-fixed-dim": "#00dbe9",
-        "tertiary-fixed": "#7df4ff",
-        "surface-tint": "#ffb1c3",
-        "surface-variant": "#353535",
-        "on-primary-container": "#590026",
-        "error-container": "#93000a",
-        "surface": "#131313",
-        "primary-fixed-dim": "#ffb1c3",
-        "on-tertiary-container": "#002f33",
-        "secondary-container": "#4a4949",
-        "outline": "#ac878f",
-        "on-tertiary-fixed": "#002022",
-        "surface-container-low": "#1b1b1b",
-        "secondary": "#c8c6c5",
-        "surface-bright": "#393939",
-        "background": "#131313",
-        "tertiary-container": "#00a0aa",
-        "on-error": "#690005",
-        "primary-container": "#ff4b89",
-        "on-tertiary": "#00363a",
-        "on-primary-fixed": "#3f0019",
-        "on-primary": "#66002c",
-        "secondary-fixed": "#e5e2e1",
-        "on-secondary-fixed-variant": "#474646",
-        "on-primary-fixed-variant": "#8f0041",
-        "surface-dim": "#131313"
+        /* ── Aura Noir Surface Hierarchy ── */
+        "surface-container-lowest": "#000000",
+        "surface-dim":              "#0e0e0e",
+        "surface":                  "#0e0e0e",
+        "surface-container-low":    "#131313",
+        "surface-container":        "#1a1a1a",
+        "surface-container-high":   "#20201f",
+        "surface-container-highest":"#262626",
+        "surface-bright":           "#2c2c2c",
+        "surface-variant":          "#262626",
+        "background":               "#0e0e0e",
+
+        /* ── Primary — Neon Magenta ── */
+        "primary":                  "#ff8aa9",
+        "primary-container":        "#ff719b",
+        "primary-dim":              "#e4006c",
+        "primary-fixed":            "#ff719b",
+        "primary-fixed-dim":        "#ff528c",
+        "on-primary":               "#62002b",
+        "on-primary-container":     "#4c0020",
+        "on-primary-fixed":         "#000000",
+        "on-primary-fixed-variant": "#5e0028",
+        "inverse-primary":          "#bc0058",
+
+        /* ── Secondary ── */
+        "secondary":                "#fb88c6",
+        "secondary-container":      "#7e205a",
+        "secondary-dim":            "#eb7bb8",
+        "secondary-fixed":          "#ffc0dd",
+        "secondary-fixed-dim":      "#ffaad4",
+        "on-secondary":             "#5e0040",
+        "on-secondary-container":   "#ffbedc",
+        "on-secondary-fixed":       "#660847",
+
+        /* ── Tertiary — Electric Violet ── */
+        "tertiary":                 "#ab9fff",
+        "tertiary-container":       "#9e8ffd",
+        "tertiary-dim":             "#9e8ffd",
+        "tertiary-fixed":           "#b1a5ff",
+        "tertiary-fixed-dim":       "#a395ff",
+        "on-tertiary":              "#2a1183",
+        "on-tertiary-container":    "#1d0071",
+
+        /* ── Text & Content ── */
+        "on-surface":               "#ffffff",
+        "on-surface-variant":       "#adaaaa",
+        "on-background":            "#ffffff",
+        "inverse-on-surface":       "#565555",
+        "inverse-surface":          "#fcf9f8",
+
+        /* ── Accents & Utilities ── */
+        "outline":                  "#767575",
+        "outline-variant":          "#484847",
+        "error":                    "#ff716c",
+        "error-dim":                "#d7383b",
+        "error-container":          "#9f0519",
+        "on-error":                 "#490006",
+        "on-error-container":       "#ffa8a3",
+        "surface-tint":             "#ff8aa9",
       },
+
       fontFamily: {
         "headline": ["Space Grotesk", "sans-serif"],
-        "body": ["Inter", "sans-serif"],
-        "label": ["Inter", "sans-serif"]
+        "body":     ["Manrope", "sans-serif"],
+        "label":    ["Space Grotesk", "sans-serif"],
       },
-      borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+
+      borderRadius: {
+        "DEFAULT": "0.375rem",
+        "lg":      "1rem",
+        "xl":      "1.5rem",
+        "2xl":     "2rem",
+        "3xl":     "3rem",
+        "full":    "9999px",
+      },
+
+      animation: {
+        "spring-bounce": "springBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "neon-pulse":    "neonPulse 3s ease-in-out infinite",
+        "film-reel":     "filmReel 0.8s ease-in-out",
+      },
+
+      spacing: {
+        "section": "5rem",
+      },
+
+      backdropBlur: {
+        "glass": "24px",
+        "hero":  "32px",
+      },
     },
   },
   plugins: [],

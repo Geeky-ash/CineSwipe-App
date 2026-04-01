@@ -1,30 +1,243 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+/* ═══════════════════════════════════════════════════════════════════════════
+   CINESWIPE — AURA NOIR DESIGN SYSTEM
+   Source: Stitch Project 5734576316148475469 · assets/542e036477a74af88822436769c9883f
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS Custom Properties ────────────────────────────────────────────────── */
+:root {
+  /* Surface hierarchy — the "void" */
+  --color-surface-lowest:       #000000;
+  --color-surface-dim:          #0e0e0e;
+  --color-surface:              #0e0e0e;
+  --color-surface-container-low:#131313;
+  --color-surface-container:    #1a1a1a;
+  --color-surface-container-high:#20201f;
+  --color-surface-container-highest:#262626;
+  --color-surface-bright:       #2c2c2c;
+  --color-surface-variant:      #262626;
+
+  /* Primary — Neon Magenta */
+  --color-primary:              #ff8aa9;
+  --color-primary-container:    #ff719b;
+  --color-primary-dim:          #e4006c;
+  --color-on-primary:           #62002b;
+  --color-on-primary-fixed:     #000000;
+  --color-inverse-primary:      #bc0058;
+
+  /* Secondary */
+  --color-secondary:            #fb88c6;
+  --color-secondary-container:  #7e205a;
+  --color-on-secondary:         #5e0040;
+
+  /* Tertiary — Electric Violet */
+  --color-tertiary:             #ab9fff;
+  --color-tertiary-container:   #9e8ffd;
+  --color-tertiary-dim:         #9e8ffd;
+  --color-on-tertiary:          #2a1183;
+
+  /* Text & Content */
+  --color-on-surface:           #ffffff;
+  --color-on-surface-variant:   #adaaaa;
+  --color-on-background:        #ffffff;
+
+  /* Accents & Utilities */
+  --color-outline:              #767575;
+  --color-outline-variant:      #484847;
+  --color-error:                #ff716c;
+  --color-error-container:      #9f0519;
+
+  /* Neon Gradient */
+  --gradient-neon:              linear-gradient(135deg, #ff8aa9, #e4006c);
+  --gradient-neon-ambient:      0 0 30px rgba(255, 138, 169, 0.15);
+}
+
+/* ── Base Layer ──────────────────────────────────────────────────────────── */
 @layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Immersive mode — content touches very top */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
   body {
     @apply font-body bg-surface-container-lowest text-on-surface antialiased;
     overflow-x: hidden;
+    min-height: 100dvh;
+  }
+
+  /* Never pure white — Aura Noir rule */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+    color: var(--color-on-surface);
   }
 }
 
-@layer utilities {
+/* ── Component Layer ─────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Glassmorphism: Floating Panels ──
+     surface_variant (#262626) at 40% + 24px blur */
   .glass-panel {
-    background: rgba(31, 31, 31, 0.6);
+    background: rgba(38, 38, 38, 0.4);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
+
+  /* ── Glassmorphism: Navigation Bar ──
+     surface_container_low (#131313) at 70% + 24px blur */
+  .glass-nav {
+    background: rgba(19, 19, 19, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  /* ── Neon Gradient (Primary CTA) ──
+     primary (#ff8aa9) → primary-dim (#e4006c) at 135° */
+  .neon-gradient {
+    background: var(--gradient-neon);
+  }
+
+  /* ── Ambient Neon Glow ──
+     Primary at 15% opacity, large blur */
   .neon-glow {
-    box-shadow: 0 0 20px rgba(255, 177, 195, 0.2);
+    box-shadow: var(--gradient-neon-ambient);
   }
+
+  /* ── Primary Glow Button ──
+     Neon gradient + ambient shadow + on-primary-fixed text */
+  .neon-btn {
+    background: var(--gradient-neon);
+    color: var(--color-on-primary-fixed);
+    font-weight: 700;
+    border-radius: 9999px;
+    box-shadow: 0 0 30px rgba(255, 138, 169, 0.3);
+    transition: all 0.3s ease;
+  }
+  .neon-btn:hover {
+    box-shadow: 0 0 50px rgba(255, 138, 169, 0.5);
+    transform: scale(1.02);
+  }
+  .neon-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Ghost Button (Secondary) ──
+     No fill. outline at 20%. Hover: primary fill 10%. */
+  .ghost-btn {
+    background: transparent;
+    border: 1px solid rgba(72, 72, 71, 0.2);
+    color: var(--color-on-surface-variant);
+    font-weight: 600;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+  }
+  .ghost-btn:hover {
+    background: rgba(255, 138, 169, 0.1);
+    border-color: rgba(255, 138, 169, 0.3);
+  }
+
+  /* ── Inner Glow (Poster Cards) ──
+     1px inset primary at 10% — makes cards pop on black */
+  .inner-glow {
+    box-shadow: inset 0 0 0 1px rgba(255, 138, 169, 0.1);
+  }
+
+  /* ── Ghost Border Fallback ──
+     outline-variant (#484847) at 15% — felt, not seen */
+  .ghost-border {
+    box-shadow: inset 0 0 0 1px rgba(72, 72, 71, 0.15);
+  }
+
+  /* ── Stitch Card ──
+     Aura Noir immersive card with hover effects */
+  .stitch-card {
+    @apply rounded-2xl overflow-hidden relative;
+    background: var(--color-surface-container-high);
+    box-shadow: inset 0 0 0 1px rgba(255, 138, 169, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .stitch-card:hover {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 138, 169, 0.2),
+      0 0 40px rgba(255, 138, 169, 0.08);
+    transform: translateY(-4px);
+  }
+
+  /* ── Stitch Input ──
+     surface_container_lowest fill, outline_variant border at 20%.
+     Focus: primary glow bloom. */
+  .stitch-input {
+    @apply w-full rounded-full py-4 pl-12 pr-6 outline-none transition-all;
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    border: 1px solid rgba(72, 72, 71, 0.2);
+  }
+  .stitch-input::placeholder {
+    color: rgba(173, 170, 170, 0.5);
+  }
+  .stitch-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 138, 169, 0.3), 0 0 20px rgba(255, 138, 169, 0.1);
+  }
+
+  /* ── Stitch Chip ──
+     Ghost border, no fill. Active: neon-gradient. */
+  .stitch-chip {
+    @apply px-5 py-2 rounded-full text-sm font-semibold transition-all;
+    background: transparent;
+    border: 1px solid rgba(72, 72, 71, 0.2);
+    color: var(--color-on-surface-variant);
+  }
+  .stitch-chip:hover {
+    background: rgba(38, 38, 38, 0.4);
+    border-color: rgba(255, 138, 169, 0.3);
+  }
+  .stitch-chip.active {
+    background: var(--gradient-neon);
+    color: var(--color-on-primary-fixed);
+    border-color: transparent;
+    box-shadow: 0 0 15px rgba(255, 138, 169, 0.3);
+  }
+
+  /* ── Bento Cell ──
+     For the Discover bento grid */
+  .bento-cell {
+    @apply rounded-2xl overflow-hidden relative;
+    background: var(--color-surface-container);
+    box-shadow: inset 0 0 0 1px rgba(72, 72, 71, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .bento-cell:hover {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 138, 169, 0.15),
+      0 0 30px rgba(255, 138, 169, 0.06);
+    transform: translateY(-2px);
+  }
+
+  /* ── Vertical Gradient Overlay ── */
   .vertical-gradient-overlay {
-    background: linear-gradient(to top, #0e0e0e 0%, rgba(14, 14, 14, 0.8) 30%, transparent 100%);
+    background: linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.8) 30%, transparent 100%);
   }
-  .side-gradient-overlay {
-    background: linear-gradient(to left, rgba(14, 14, 14, 0.4) 0%, transparent 100%);
-  }
+}
+
+/* ── Utility Layer ───────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Scrollbar hiding */
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -32,6 +245,8 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Masonry grid */
   .masonry-grid {
     column-count: 2;
     column-gap: 1rem;
@@ -40,4 +255,38 @@
     break-inside: avoid;
     margin-bottom: 1rem;
   }
+
+  /* Immersive mode — remove safe area insets visually */
+  .immersive {
+    padding-top: 0 !important;
+  }
+
+  /* Text glow */
+  .text-glow {
+    text-shadow: 0 0 20px rgba(255, 138, 169, 0.4);
+  }
+
+  /* Neon bloom shadow for focus states */
+  .neon-bloom {
+    box-shadow: 0 0 40px rgba(255, 138, 169, 0.15), 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+@keyframes springBounce {
+  0%   { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  50%  { transform: scale(1.08) rotate(1deg); opacity: 1; }
+  75%  { transform: scale(0.97) rotate(-0.5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 138, 169, 0.15); }
+  50%      { box-shadow: 0 0 40px rgba(255, 138, 169, 0.35); }
+}
+
+@keyframes filmReel {
+  0%   { transform: rotateY(-90deg) scale(0.5); opacity: 0; }
+  50%  { transform: rotateY(10deg) scale(1.05); opacity: 1; }
+  100% { transform: rotateY(0deg) scale(1); opacity: 1; }
 }
