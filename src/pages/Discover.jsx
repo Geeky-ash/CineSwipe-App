@@ -28,6 +28,10 @@ export default function Discover() {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
 
+  // Filter States
+  const [filterResults, setFilterResults] = useState([]);
+  const [filtering, setFiltering] = useState(false);
+
   /* Debounced search */
   useEffect(() => {
     if (!query.trim()) { setSearchResults([]); return; }
@@ -39,6 +43,37 @@ export default function Discover() {
     }, 400);
     return () => clearTimeout(timeout);
   }, [query]);
+
+  // Handle Genre Filters
+  useEffect(() => {
+    if (activeFilter === 'All') {
+      setFilterResults([]);
+      return;
+    }
+    
+    // Map custom editorial filters to TMDB Genre IDs
+    const genreMap = {
+      'Cyberpunk': [878, 28],      // Sci-Fi, Action
+      'Neo-Noir': [80, 9648],      // Crime, Mystery
+      'Mumblecore': [18, 10749],   // Drama, Romance
+      'Surrealism': [14, 9648],    // Fantasy, Mystery
+    };
+
+    const fetchFiltered = async () => {
+      setFiltering(true);
+      try {
+        const { fetchMoviesByGenres } = await import('../services/tmdb');
+        const results = await fetchMoviesByGenres(genreMap[activeFilter] || [878], 1);
+        setFilterResults(results);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setFiltering(false);
+      }
+    };
+    
+    fetchFiltered();
+  }, [activeFilter]);
 
   useEffect(() => {
     Promise.all([
@@ -148,7 +183,49 @@ export default function Discover() {
 
       <main className="max-w-[1800px] mx-auto w-full pb-10">
         
-        {/* ── 2. Late Night Thrills (Horizontal Scroll) ── */}
+        {/* Render Filter Results if active, else standard editorial layout */}
+        {activeFilter !== 'All' ? (
+          <section className="px-4 lg:px-12 mb-20 w-full min-h-[50vh]">
+            <h2 className="font-headline text-3xl font-black tracking-tighter uppercase relative mb-8">
+              {activeFilter} Spotlight
+            </h2>
+            
+            {filtering ? (
+              <div className="flex items-center justify-center py-20">
+                <span className="material-symbols-outlined text-4xl animate-spin text-primary">autorenew</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                {filterResults.map((movie) => (
+                  <div
+                    key={movie.id}
+                    onClick={() => navigate(`/movie/${movie.id}`)}
+                    className="stitch-card cursor-pointer group shadow-lg"
+                  >
+                    {movie.poster_path ? (
+                      <img
+                        alt={movie.title}
+                        className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                        src={`${POSTER_BASE}${movie.poster_path}`}
+                      />
+                    ) : (
+                      <div className="w-full aspect-[2/3] bg-surface-container flex items-center justify-center">
+                        <span className="material-symbols-outlined text-outline text-4xl">movie</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90 pointer-events-none" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <p className="font-headline text-sm font-bold leading-tight line-clamp-2">{movie.title}</p>
+                      <p className="text-on-surface-variant text-[11px] mt-1 font-body font-bold">{movie.release_date?.slice(0, 4) || ''}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : (
+          <>
+            {/* ── 2. Late Night Thrills (Horizontal Scroll) ── */}
         <section className="px-4 lg:px-12 mb-20 w-full">
           <div className="flex items-end justify-between mb-8">
             <h2 className="font-headline text-3xl font-black tracking-tighter uppercase relative">
@@ -304,6 +381,8 @@ export default function Discover() {
           </div>
 
         </section>
+        </>
+        )}
 
       </main>
       </>
