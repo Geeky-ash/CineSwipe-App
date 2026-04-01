@@ -18,7 +18,7 @@ const MOOD_CHIPS = [
 
 function MoodChipStrip({ activeVibe, onSelect }) {
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 pointer-events-none lg:pl-[80px]" style={{ height: '110px' }}>
+    <div className="fixed top-0 left-0 right-0 z-40 pointer-events-none" style={{ height: '110px' }}>
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%)' }} />
       <div className="relative pt-[84px] pb-2 pointer-events-auto max-w-[1800px] mx-auto">
         <div className="flex gap-2.5 overflow-x-auto hide-scrollbar px-5 lg:px-12 snap-x snap-mandatory">
