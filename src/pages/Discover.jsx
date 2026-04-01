@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchUpcomingMovies, fetchTrendingMovies, fetchTopRatedMovies, fetchMoviesByDirector, getGenreLabel } from '../services/tmdb';
+import { fetchUpcomingMovies, fetchTrendingMovies, fetchTopRatedMovies, fetchMoviesByDirector, getGenreLabel, searchMovies } from '../services/tmdb';
 import StitchLoader from '../components/StitchLoader';
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
@@ -22,6 +22,23 @@ export default function Discover() {
   const [topRated, setTopRated] = useState([]);
   const [directorMovies, setDirectorMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Search State
+  const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+
+  /* Debounced search */
+  useEffect(() => {
+    if (!query.trim()) { setSearchResults([]); return; }
+    const timeout = setTimeout(async () => {
+      setSearching(true);
+      const results = await searchMovies(query);
+      setSearchResults(results);
+      setSearching(false);
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [query]);
 
   useEffect(() => {
     Promise.all([
@@ -45,9 +62,75 @@ export default function Discover() {
   return (
     <div className="bg-surface-container-lowest text-on-surface min-h-[100dvh] pb-0 overflow-x-hidden w-full">
       
-      {/* ── 1. Top-Level Filters ── */}
-      <div className="pt-[84px] lg:pt-[100px] pb-8 px-4 lg:px-12 max-w-[1800px] mx-auto w-full flex items-center flex-wrap gap-2 lg:gap-4 overflow-x-auto hide-scrollbar">
-        <span className="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mr-4">Filters</span>
+      {/* ── 0. Discover Search ── */}
+      <div className="pt-[84px] lg:pt-[100px] px-4 lg:px-12 max-w-[1800px] mx-auto w-full flex flex-col items-center">
+        <div className="relative w-full max-w-2xl mb-6">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            {searching 
+              ? <span className="material-symbols-outlined text-primary text-xl animate-spin">autorenew</span>
+              : <span className="material-symbols-outlined text-on-surface-variant text-xl">search</span>
+            }
+          </div>
+          <input
+            className="w-full bg-surface-container-high text-on-surface text-lg pl-12 pr-12 py-4 rounded-full border border-outline-variant/10 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all font-body ghost-border"
+            placeholder="Search films, directors, actors..."
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query && (
+            <button
+              onClick={() => { setQuery(''); setSearchResults([]); }}
+              className="absolute inset-y-0 right-4 flex items-center text-on-surface-variant hover:text-on-surface"
+            >
+              <span className="material-symbols-outlined text-xl">close</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {query.trim().length > 0 ? (
+        <div className="max-w-[1800px] mx-auto px-4 lg:px-12 pb-20 w-full min-h-[50vh]">
+          <h2 className="font-headline text-lg font-bold mb-6 text-on-surface-variant">Search Results</h2>
+          {searchResults.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              {searchResults.slice(0, 20).map((movie) => (
+                <div
+                  key={movie.id}
+                  onClick={() => navigate(`/movie/${movie.id}`)}
+                  className="stitch-card cursor-pointer group shadow-lg"
+                >
+                  {movie.poster_path ? (
+                    <img
+                      alt={movie.title}
+                      className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                      src={`${POSTER_BASE}${movie.poster_path}`}
+                    />
+                  ) : (
+                    <div className="w-full aspect-[2/3] bg-surface-container flex items-center justify-center">
+                      <span className="material-symbols-outlined text-outline text-4xl">movie</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90 pointer-events-none" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <p className="font-headline text-sm font-bold leading-tight line-clamp-2">{movie.title}</p>
+                    <p className="text-on-surface-variant text-[11px] mt-1 font-body font-bold">{movie.release_date?.slice(0, 4) || ''}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : !searching ? (
+            <div className="text-center py-20 text-on-surface-variant flex flex-col items-center">
+              <span className="material-symbols-outlined text-5xl mb-4 opacity-50">search_off</span>
+              <p className="text-lg font-body">No results found for "{query}"</p>
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <>
+          {/* ── 1. Top-Level Filters ── */}
+          <div className="pb-8 px-4 lg:px-12 max-w-[1800px] mx-auto w-full flex items-center flex-wrap gap-2 lg:gap-4 overflow-x-auto hide-scrollbar">
+            <span className="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mr-4">Filters</span>
         {FILTERS.map((f) => (
           <button
             key={f}
@@ -223,6 +306,8 @@ export default function Discover() {
         </section>
 
       </main>
+      </>
+      )}
 
       {/* ── 5. Minimalist Footer ── */}
       <footer className="w-full bg-surface-container-highest/20 border-t border-white/5 py-12 flex flex-col items-center justify-center text-center gap-6">
