@@ -38,23 +38,25 @@ export default function TopNav() {
             <span className="font-headline font-bold text-xl tracking-tight hidden sm:block">CineSwipe</span>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex-1 flex gap-2 lg:gap-8 overflow-x-auto hide-scrollbar">
+          {/* Navigation Tabs - Pill List on Mobile, standard on Desktop */}
+          <div className="flex-1 flex gap-2 lg:gap-8 overflow-x-auto hide-scrollbar pb-1 lg:pb-0">
             {TABS.map((tab) => {
               const active = location.pathname === tab.path || (tab.path !== '/' && location.pathname.startsWith(tab.path));
               return (
                 <button
                   key={tab.path}
                   onClick={() => navigate(tab.path)}
-                  className={`relative py-2 px-3 lg:px-0 text-sm font-headline tracking-wide uppercase transition-colors whitespace-nowrap ${
-                    active ? 'text-on-surface font-bold text-shadow-glow' : 'text-on-surface-variant hover:text-on-surface/80 font-medium'
+                  className={`relative py-1.5 lg:py-2 px-4 lg:px-0 rounded-full lg:rounded-none text-xs lg:text-sm font-headline tracking-wide uppercase transition-colors whitespace-nowrap ${
+                    active 
+                      ? 'bg-primary/20 lg:bg-transparent text-primary lg:text-on-surface font-bold text-shadow-glow' 
+                      : 'bg-surface-container/50 lg:bg-transparent text-on-surface-variant hover:text-on-surface/80 font-medium'
                   }`}
                 >
                   {tab.label}
                   {active && (
                     <motion.div
                       layoutId="topNavIndicator"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 neon-gradient rounded-full"
+                      className="hidden lg:block absolute -bottom-1 left-0 right-0 h-0.5 neon-gradient rounded-full"
                       style={{ boxShadow: '0 0 10px rgba(255,138,169,0.8)' }}
                     />
                   )}

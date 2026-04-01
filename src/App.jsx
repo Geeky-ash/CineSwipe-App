@@ -8,6 +8,8 @@ import Clubs from './pages/Clubs';
 import Login from './pages/Login';
 import MovieDetails from './pages/MovieDetails';
 import TopNav from './components/TopNav';
+import IconSidebar from './components/IconSidebar';
+import BottomNav from './components/BottomNav';
 import VibeCheck from './components/VibeCheck';
 import StitchLoader from './components/StitchLoader';
 
@@ -82,9 +84,13 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <VibeProvider>
-          <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface">
+          <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface lg:pl-[80px]">
+            <IconSidebar />
             <TopNav />
-            <AnimatedRoutes />
+            <div className="pb-20 lg:pb-0">
+              <AnimatedRoutes />
+            </div>
+            <BottomNav />
             <VibeCheck />
           </div>
         </VibeProvider>
