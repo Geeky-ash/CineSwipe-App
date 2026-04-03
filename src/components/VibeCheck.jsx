@@ -35,7 +35,7 @@ function useTypewriter(text, speed = 40, startDelay = 300) {
 /* ─── AI question flow ──────────────────────────────────────────────────── */
 const QUESTIONS = [
   {
-    text: "Hey there! 🎬 How's the mood today?",
+    text: "",
     options: [
       { label: '🔥 Pumped up!', value: 'energetic' },
       { label: '😌 Chill & Relaxed', value: 'relaxed' },
