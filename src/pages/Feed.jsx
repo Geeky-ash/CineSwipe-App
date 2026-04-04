@@ -7,41 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useVibe } from '../contexts/VibeContext';
 import StitchLoader from '../components/StitchLoader';
 
-const MOOD_CHIPS = [
-  { key: null,            label: '✨ All' },
-  { key: 'action-packed', label: '🔥 Hype' },
-  { key: 'relaxed',       label: '🍿 Chill' },
-  { key: 'emotional',     label: '😭 Emotional' },
-  { key: 'spooky',        label: '🌑 Dark' },
-  { key: 'feel-good',     label: '🌈 Feel-Good' },
-];
 
-function MoodChipStrip({ activeVibe, onSelect }) {
-  return (
-    <div className="fixed top-0 left-0 right-0 z-40 pointer-events-none" style={{ height: '110px' }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%)' }} />
-      <div className="relative pt-[84px] pb-2 pointer-events-auto max-w-[1800px] mx-auto">
-        <div className="flex gap-2.5 overflow-x-auto hide-scrollbar px-5 lg:px-12 snap-x snap-mandatory">
-          {MOOD_CHIPS.map((chip) => {
-            const isActive = chip.key === activeVibe;
-            return (
-              <button
-                key={chip.label}
-                onClick={() => onSelect(chip.key)}
-                className={`flex-shrink-0 snap-start px-4 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-200 active:scale-95 whitespace-nowrap ${
-                  isActive ? 'neon-gradient text-on-primary-fixed shadow-lg' : 'text-on-surface-variant bg-surface-container-highest/50 ghost-border hover:text-on-surface'
-                }`}
-                style={isActive ? { boxShadow: '0 0 20px rgba(255,138,169,0.25)' } : {}}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }) {
   const navigate = useNavigate();
@@ -269,8 +235,6 @@ export default function Feed() {
         >
           {/* Base Fallback Color */}
           <div className="fixed inset-0 bg-surface-container-lowest z-[-2]" />
-
-          <MoodChipStrip activeVibe={activeVibe} onSelect={(v) => v === null ? resetVibe() : selectVibe(v)} />
 
           <AnimatePresence>
             {saveStatus && (

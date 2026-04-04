@@ -13,6 +13,7 @@ export default function Profile() {
   const [movies, setMovies] = useState([]);
   const [actors, setActors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Mock stats
   const stats = {
@@ -88,14 +89,23 @@ export default function Profile() {
               </div>
             </div>
 
-            <button
-              onClick={signOut}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full glass-panel ghost-border hover:text-error hover:bg-error/10 transition-all font-bold text-sm"
-              title="Sign Out"
-            >
-              <span className="material-symbols-outlined text-[18px]">logout</span>
-              Sign Out
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowSettings(true)}
+                className="w-12 h-12 rounded-full glass-panel ghost-border flex items-center justify-center hover:bg-surface-container-high transition-colors shadow-lg"
+                title="Settings"
+              >
+                <span className="material-symbols-outlined text-[20px]">settings</span>
+              </button>
+              <button
+                onClick={signOut}
+                className="hidden md:flex items-center justify-center gap-2 px-6 py-3 rounded-full glass-panel ghost-border hover:text-error hover:bg-error/10 transition-all font-bold text-sm shadow-lg"
+                title="Sign Out"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+                Sign Out
+              </button>
+            </div>
           </div>
 
           {/* Glassmorphic Tab Switcher */}
@@ -272,6 +282,16 @@ export default function Profile() {
         </aside>
 
       </div>
+
+      {/* Settings Modal */}
+      <AnimatePresence>
+        {showSettings && (
+          <SettingsModal 
+            onClose={() => setShowSettings(false)} 
+            signOut={signOut} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -302,5 +322,224 @@ function EmptyState({ type, onExplore }) {
         <span className="relative z-10 font-bold tracking-wide">Explore Discover</span>
       </button>
     </div>
+  );
+}
+
+function SettingsModal({ onClose, signOut }) {
+  const [view, setView] = useState('main'); // 'main' or 'edit'
+  const [pushEnabled, setPushEnabled] = useState(true);
+  const [privateEnabled, setPrivateEnabled] = useState(false);
+  const [dataSaver, setDataSaver] = useState(false);
+
+  const [profileForm, setProfileForm] = useState({
+    username: 'cinephile',
+    firstName: '',
+    lastName: '',
+    dob: '',
+    bio: ''
+  });
+
+  const Toggle = ({ isOn, onToggle }) => (
+    <div 
+      onClick={onToggle}
+      className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-300 ${isOn ? 'bg-primary' : 'bg-surface-container-highest border border-white/10'}`}
+    >
+      <motion.div 
+        layout 
+        className="absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm"
+        style={{ left: isOn ? '28px' : '4px' }}
+      />
+    </div>
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 40, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 20, opacity: 0, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        onClick={(e) => e.stopPropagation()}
+        className={`w-full ${view === 'edit' ? 'max-w-lg' : 'max-w-sm'} bg-surface-container-lowest glass-panel ghost-border rounded-3xl overflow-hidden relative shadow-2xl transition-all duration-300`}
+      >
+        {view === 'main' ? (
+          <>
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-surface-container/30">
+              <h2 className="font-headline text-lg font-bold flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">settings</span>
+                Settings
+              </h2>
+              <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Edit Profile Link */}
+              <div 
+                onClick={() => setView('edit')}
+                className="flex justify-between items-center gap-4 cursor-pointer hover:bg-white/5 p-3 -mx-3 rounded-xl transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors">
+                    <span className="material-symbols-outlined">edit</span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-on-surface text-sm">Edit Profile</p>
+                    <p className="text-xs text-on-surface-variant font-body mt-1">Change your name, username, and bio.</p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+              </div>
+
+              <hr className="border-white/5 my-2" />
+
+              {/* Setting Item */}
+              <div className="flex justify-between items-center gap-4">
+                <div>
+                  <p className="font-bold text-on-surface text-sm">Push Notifications</p>
+                  <p className="text-xs text-on-surface-variant font-body mt-1">Alerts for matches and messages.</p>
+                </div>
+                <Toggle isOn={pushEnabled} onToggle={() => setPushEnabled(!pushEnabled)} />
+              </div>
+              
+              {/* Setting Item */}
+              <div className="flex justify-between items-center gap-4">
+                <div>
+                  <p className="font-bold text-on-surface text-sm">Private Account</p>
+                  <p className="text-xs text-on-surface-variant font-body mt-1">Hide your library from public view.</p>
+                </div>
+                <Toggle isOn={privateEnabled} onToggle={() => setPrivateEnabled(!privateEnabled)} />
+              </div>
+
+              {/* Setting Item */}
+              <div className="flex justify-between items-center gap-4">
+                <div>
+                  <p className="font-bold text-on-surface text-sm">Data Saver</p>
+                  <p className="text-xs text-on-surface-variant font-body mt-1">Use lower quality images to save data.</p>
+                </div>
+                <Toggle isOn={dataSaver} onToggle={() => setDataSaver(!dataSaver)} />
+              </div>
+
+              <hr className="border-white/5 my-4" />
+
+              {/* Action Area */}
+              <button
+                 onClick={signOut}
+                 className="w-full py-3.5 rounded-xl bg-error/10 text-error hover:bg-error/20 transition-colors font-bold flex items-center justify-center gap-2 border border-error/20"
+              >
+                 <span className="material-symbols-outlined text-[18px]">logout</span>
+                 Log Out of Account
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-surface-container/30">
+              <div className="flex items-center gap-3">
+                <button onClick={() => setView('main')} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
+                  <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+                </button>
+                <h2 className="font-headline text-lg font-bold">Edit Profile</h2>
+              </div>
+              <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              {/* Profile Photo */}
+              <div className="flex items-center gap-5 mb-8">
+                <div className="w-16 h-16 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center shadow-lg">
+                  <span className="font-headline text-xl font-bold">AS</span>
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-on-surface">Profile photo</p>
+                  <button className="text-xs text-primary mt-1 hover:underline font-medium">Upload a new profile photo</button>
+                </div>
+              </div>
+
+              <div className="space-y-5">
+                {/* Username */}
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant mb-1.5 ml-1">Username</label>
+                  <input 
+                    type="text" 
+                    value={profileForm.username}
+                    onChange={(e) => setProfileForm({...profileForm, username: e.target.value})}
+                    className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary/50 focus:bg-surface-container focus:ring-1 focus:ring-primary/50 transition-all font-body" 
+                    placeholder="Username" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* First Name */}
+                  <div>
+                    <label className="block text-xs font-bold text-on-surface-variant mb-1.5 ml-1">First name</label>
+                    <input 
+                      type="text" 
+                      value={profileForm.firstName}
+                      onChange={(e) => setProfileForm({...profileForm, firstName: e.target.value})}
+                      className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary/50 focus:bg-surface-container focus:ring-1 focus:ring-primary/50 transition-all font-body" 
+                      placeholder="First name" 
+                    />
+                  </div>
+
+                  {/* Last Name */}
+                  <div>
+                    <label className="block text-xs font-bold text-on-surface-variant mb-1.5 ml-1">Last name</label>
+                    <input 
+                      type="text" 
+                      value={profileForm.lastName}
+                      onChange={(e) => setProfileForm({...profileForm, lastName: e.target.value})}
+                      className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary/50 focus:bg-surface-container focus:ring-1 focus:ring-primary/50 transition-all font-body" 
+                      placeholder="Last name" 
+                    />
+                  </div>
+                </div>
+
+                {/* Date of Birth */}
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant mb-1.5 ml-1">Date of birth</label>
+                  <input 
+                    type="text" 
+                    value={profileForm.dob}
+                    onChange={(e) => setProfileForm({...profileForm, dob: e.target.value})}
+                    className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary/50 focus:bg-surface-container focus:ring-1 focus:ring-primary/50 transition-all font-body" 
+                    placeholder="DD/MM/YYYY" 
+                  />
+                  <p className="text-[10px] text-on-surface-variant mt-1.5 ml-1">This won't be shown publicly. Enter in DD/MM/YYYY format.</p>
+                </div>
+
+                {/* Bio */}
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant mb-1.5 ml-1">Bio</label>
+                  <textarea 
+                    value={profileForm.bio}
+                    onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
+                    className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary/50 focus:bg-surface-container focus:ring-1 focus:ring-primary/50 transition-all min-h-[100px] resize-none font-body" 
+                    placeholder="Tell us about yourself"
+                  ></textarea>
+                  <p className="text-[10px] text-on-surface-variant mt-1.5 ml-1">Write a short bio to tell people more about yourself.</p>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setView('main')}
+                className="w-full mt-6 py-3.5 rounded-xl neon-btn font-bold text-sm shadow-[0_0_20px_rgba(255,138,169,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Save Changes
+              </button>
+            </div>
+          </>
+        )}
+      </motion.div>
+    </motion.div>
   );
 }

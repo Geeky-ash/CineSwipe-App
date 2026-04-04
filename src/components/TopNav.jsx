@@ -1,5 +1,6 @@
+import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 
 const TABS = [
@@ -12,7 +13,19 @@ const TABS = [
 export default function TopNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { session } = useAuth();
+  const { session, signOut } = useAuth();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -65,11 +78,18 @@ export default function TopNav() {
             })}
           </div>
 
-          {/* User Profile */}
-          <div className="flex-shrink-0">
+          {/* Action Icons & User Profile */}
+          <div className="flex items-center gap-2 lg:gap-4 flex-shrink-0 relative" ref={dropdownRef}>
+            
+            {/* Notification Button */}
+            <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/5 transition-colors text-on-surface-variant hover:text-on-surface">
+              <span className="material-symbols-outlined text-[20px] lg:text-[22px]">notifications</span>
+            </button>
+
+            {/* User Profile Toggle */}
             <button 
-              onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-10 h-10 rounded-full glass-panel ghost-border hover:bg-surface-container-highest transition-all"
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="flex items-center justify-center w-10 h-10 rounded-full glass-panel ghost-border hover:bg-surface-container-highest transition-all relative"
             >
               {session?.user?.user_metadata?.avatar_url ? (
                 <img src={session.user.user_metadata.avatar_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
@@ -77,6 +97,51 @@ export default function TopNav() {
                 <span className="material-symbols-outlined text-[20px] text-on-surface-variant">person</span>
               )}
             </button>
+
+            {/* Dropdown Menu */}
+            <AnimatePresence>
+              {showDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-14 right-0 w-48 bg-surface-container-lowest/90 glass-panel ghost-border rounded-xl overflow-hidden shadow-2xl flex flex-col py-2 backdrop-blur-xl z-[200]"
+                >
+                  <button 
+                    onClick={() => { setShowDropdown(false); navigate('/profile'); }}
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors text-sm text-on-surface w-full text-left font-medium"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">person</span>
+                    My Profile
+                  </button>
+                  <button 
+                    onClick={() => { setShowDropdown(false); /* Handle reviews toggle here when ready */ }}
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors text-sm text-on-surface w-full text-left font-medium"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">edit_square</span>
+                    My Reviews
+                  </button>
+                  <button 
+                    onClick={() => { setShowDropdown(false); navigate('/profile'); }}
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors text-sm text-on-surface w-full text-left font-medium"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">settings</span>
+                    Settings
+                  </button>
+                  
+                  <div className="h-[1px] bg-white/5 my-1 mx-2" />
+                  
+                  <button 
+                    onClick={() => { setShowDropdown(false); if (signOut) signOut(); }}
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-error/10 text-error transition-colors text-sm w-full text-left font-bold"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">logout</span>
+                    Logout
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </nav>
