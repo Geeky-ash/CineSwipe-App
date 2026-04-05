@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUpcomingMovies, fetchTrendingMovies, fetchTopRatedMovies, fetchMoviesByDirector, getGenreLabel, searchMovies } from '../services/tmdb';
-import StitchLoader from '../components/StitchLoader';
+// import StitchLoader from '../components/StitchLoader';
+import { Skeleton } from 'boneyard-js';
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
 
@@ -92,7 +93,8 @@ export default function Discover() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <StitchLoader vibeLabel="Loading Discover…" />;
+  // Removed if (loading) return <StitchLoader />
+
 
   return (
     <div className="bg-surface-container-lowest text-on-surface min-h-[100dvh] pb-0 overflow-x-hidden w-full">
@@ -273,6 +275,7 @@ export default function Discover() {
         </section>
 
         {/* ── 3. Director Spotlight (Wong Kar-Wai) ── */}
+        <Skeleton name="director-spotlight" color="#1a1a1a" animate={true} loading={loading}>
         <section className="px-4 lg:px-12 mb-20 w-full relative">
           <div className="absolute inset-0 pointer-events-none rounded-[3rem] opacity-20" 
                style={{ background: 'radial-gradient(ellipse at center, rgba(171,159,255,0.4) 0%, transparent 60%)' }} />
@@ -327,8 +330,10 @@ export default function Discover() {
             
           </div>
         </section>
+        </Skeleton>
 
         {/* ── 4. Bottom Grid (2-Column) ── */}
+        <Skeleton name="discover-bento" color="#1a1a1a" animate={true} loading={loading}>
         <section className="px-4 lg:px-12 mb-20 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           
           {/* Left Column: Trending in Clubs */}
@@ -381,6 +386,8 @@ export default function Discover() {
           </div>
 
         </section>
+        </Skeleton>
+
         </>
         )}
 
