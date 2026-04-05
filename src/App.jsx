@@ -86,7 +86,6 @@ function MainLayout() {
         <AnimatedRoutes />
       </div>
       <BottomNav />
-      <VibeCheck />
     </div>
   );
 }

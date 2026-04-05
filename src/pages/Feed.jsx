@@ -5,8 +5,7 @@ import { fetchTrendingMovies, fetchTopRatedMovies, fetchMoviesByGenres } from '.
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useVibe } from '../contexts/VibeContext';
-// import StitchLoader from '../components/StitchLoader';
-import { Skeleton } from 'boneyard-js';
+import StitchLoader from '../components/StitchLoader';
 
 
 
@@ -229,13 +228,19 @@ export default function Feed() {
   };
 
   return (
-    <motion.div
-      key="feed"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="w-full text-on-surface overflow-x-hidden min-h-[100dvh] relative"
-    >
+    <AnimatePresence mode="wait">
+      {loading ? (
+        <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
+          <StitchLoader vibeLabel={currentVibe ? `Loading ${currentVibe.label.split(' ')[0]} Hub…` : 'Loading Cinematic Hub…'} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="feed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="w-full text-on-surface overflow-x-hidden min-h-[100dvh] relative"
+        >
       {/* Base Fallback Color */}
       <div className="fixed inset-0 bg-surface-container-lowest z-[-2]" />
 
@@ -258,35 +263,33 @@ export default function Feed() {
         <div className="col-span-3 lg:pb-20 relative z-10 w-full lg:w-auto h-[100dvh] lg:h-auto flex flex-col justify-center pt-[140px] pb-[80px] lg:pt-0 lg:pb-0">
           
           <section className="relative w-[calc(100vw-48px)] lg:w-full h-[65vh] lg:h-[70vh] 2xl:h-[75vh] mx-auto z-20 flex items-center justify-center lg:mt-[120px] lg:sticky lg:top-[120px]">
-            <Skeleton name="swipe-hero" color="#1a1a1a" animate={true} loading={loading}>
-              <div className="relative w-full h-full lg:max-w-2xl xl:max-w-4xl 2xl:max-w-5xl mx-auto">
-                {heroMovies.length === 0 && !loading ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center glass-panel rounded-[32px] text-center px-6 ghost-border">
-                    <span className="text-5xl mb-4">🎬</span>
-                    <h3 className="font-headline font-bold text-2xl mb-2">Caught up!</h3>
-                    <p className="text-on-surface-variant text-base font-body">Change your vibe above.</p>
-                  </div>
-                ) : (
-                  <AnimatePresence>
-                    {heroMovies.slice(0, 3).reverse().map((movie, idx, arr) => {
-                      const isFront = idx === arr.length - 1;
-                      const isSecond = idx === arr.length - 2;
-                      return (
-                        <HeroCard
-                          key={movie.id}
-                          movie={movie}
-                          isFront={isFront}
-                          isSecond={isSecond}
-                          onSwipeRight={handleSwipeRight}
-                          onSwipeLeft={handleSwipeLeft}
-                          color={glowColor}
-                        />
-                      );
-                    })}
-                  </AnimatePresence>
-                )}
-              </div>
-            </Skeleton>
+            <div className="relative w-full h-full lg:max-w-2xl xl:max-w-4xl 2xl:max-w-5xl mx-auto">
+              {heroMovies.length === 0 ? (
+                <div className="w-full h-full flex flex-col items-center justify-center glass-panel rounded-[32px] text-center px-6 ghost-border">
+                  <span className="text-5xl mb-4">🎬</span>
+                  <h3 className="font-headline font-bold text-2xl mb-2">Caught up!</h3>
+                  <p className="text-on-surface-variant text-base font-body">Change your vibe above.</p>
+                </div>
+              ) : (
+                <AnimatePresence>
+                  {heroMovies.slice(0, 3).reverse().map((movie, idx, arr) => {
+                    const isFront = idx === arr.length - 1;
+                    const isSecond = idx === arr.length - 2;
+                    return (
+                      <HeroCard
+                        key={movie.id}
+                        movie={movie}
+                        isFront={isFront}
+                        isSecond={isSecond}
+                        onSwipeRight={handleSwipeRight}
+                        onSwipeLeft={handleSwipeLeft}
+                        color={glowColor}
+                      />
+                    );
+                  })}
+                </AnimatePresence>
+              )}
+            </div>
           </section>
         </div>
 
@@ -315,46 +318,46 @@ export default function Feed() {
             Your<br />Library
           </h2>
 
-          <Skeleton name="sidebar-list" color="#1a1a1a" animate={true} loading={loading}>
-            <div className="flex flex-col gap-3">
-              <button onClick={() => navigate('/profile')} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
-                <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">favorite</span>
-                <div>
-                  <h3 className="font-headline font-bold text-lg">My Watchlist</h3>
-                  <p className="font-body text-xs text-on-surface-variant">Saved for later</p>
-                </div>
-              </button>
+          <div className="flex flex-col gap-3">
+            <button onClick={() => navigate('/profile')} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
+              <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">favorite</span>
+              <div>
+                <h3 className="font-headline font-bold text-lg">My Watchlist</h3>
+                <p className="font-body text-xs text-on-surface-variant">Saved for later</p>
+              </div>
+            </button>
 
-              <button onClick={() => navigate('/profile')} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
-                <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">history</span>
-                <div>
-                  <h3 className="font-headline font-bold text-lg">Watch History</h3>
-                  <p className="font-body text-xs text-on-surface-variant">Films you've rated</p>
-                </div>
-              </button>
-              
-              <button onClick={() => navigate('/profile')} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
-                <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">person_play</span>
-                <div>
-                  <h3 className="font-headline font-bold text-lg">Saved Actors</h3>
-                  <p className="font-body text-xs text-on-surface-variant">Your favorites</p>
-                </div>
-              </button>
+            <button onClick={() => navigate('/profile')} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
+              <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">history</span>
+              <div>
+                <h3 className="font-headline font-bold text-lg">Watch History</h3>
+                <p className="font-body text-xs text-on-surface-variant">Films you've rated</p>
+              </div>
+            </button>
+            
+            <button onClick={() => navigate('/profile')} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
+              <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">person_play</span>
+              <div>
+                <h3 className="font-headline font-bold text-lg">Saved Actors</h3>
+                <p className="font-body text-xs text-on-surface-variant">Your favorites</p>
+              </div>
+            </button>
 
-              <div className="h-px w-full bg-white/5 my-4" />
+            <div className="h-px w-full bg-white/5 my-4" />
 
-              <button className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
-                <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">settings</span>
-                <div>
-                  <h3 className="font-headline font-bold text-lg">Settings</h3>
-                  <p className="font-body text-xs text-on-surface-variant">Preferences & Account</p>
-                </div>
-              </button>
-            </div>
-          </Skeleton>
+            <button className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high transition-colors text-left group">
+              <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">settings</span>
+              <div>
+                <h3 className="font-headline font-bold text-lg">Settings</h3>
+                <p className="font-body text-xs text-on-surface-variant">Preferences & Account</p>
+              </div>
+            </button>
+          </div>
         </motion.div>
 
       </div>
-    </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Skeleton } from 'boneyard-js';
+
 
 const MOCK_CLUBS = [
   { id: 'c1', name: 'Sci-Fi Seekers', members: '12.4k', backdrop: 'https://image.tmdb.org/t/p/w780/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg', avatar: '🛸', activeUsers: 342, description: 'Discussing Interstellar, Dune, and the future of cinema.' },
@@ -100,12 +100,6 @@ function ImmersiveCard({ club }) {
 export default function Clubs() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Discover');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface overflow-x-hidden pb-32 lg:pb-0">
@@ -144,42 +138,38 @@ export default function Clubs() {
 
           {/* Conversation Pills */}
           <div className="mb-8 w-full overflow-hidden">
-            <Skeleton name="talk-of-town" color="#1a1a1a" animate={true} loading={loading}>
-              <div className="flex items-center gap-3 overflow-x-auto hide-scrollbar py-2">
-                {MOCK_CONVERSATIONS.map((msg) => (
-                  <div key={msg.id} className="flex-shrink-0 flex items-center gap-2.5 bg-surface-container/40 rounded-full px-4 py-2 hover:bg-surface-container-high transition-colors cursor-pointer backdrop-blur-sm">
-                    <span className={`material-symbols-outlined text-[16px] ${msg.color}`}>{msg.icon}</span>
-                    <span className="text-xs font-semibold text-on-surface/90 whitespace-nowrap font-body">{msg.text}</span>
-                  </div>
-                ))}
-              </div>
-            </Skeleton>
+            <div className="flex items-center gap-3 overflow-x-auto hide-scrollbar py-2">
+              {MOCK_CONVERSATIONS.map((msg) => (
+                <div key={msg.id} className="flex-shrink-0 flex items-center gap-2.5 bg-surface-container/40 rounded-full px-4 py-2 hover:bg-surface-container-high transition-colors cursor-pointer backdrop-blur-sm">
+                  <span className={`material-symbols-outlined text-[16px] ${msg.color}`}>{msg.icon}</span>
+                  <span className="text-xs font-semibold text-on-surface/90 whitespace-nowrap font-body">{msg.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <Skeleton name="club-cards" color="#1a1a1a" animate={true} loading={loading}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-              >
-                {activeTab === 'Discover' && MOCK_CLUBS.map((club) => <ImmersiveCard key={club.id} club={club} />)}
-                {activeTab === 'Trending' && [...MOCK_CLUBS].reverse().map((club) => <ImmersiveCard key={club.id} club={club} />)}
-                {activeTab === 'Joined' && (
-                  <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-surface-container/20 rounded-2xl ghost-border">
-                    <span className="text-5xl mb-4">✨</span>
-                    <h3 className="font-headline text-xl font-bold">No Clubs Joined</h3>
-                    <p className="text-on-surface-variant text-sm mt-2 max-w-sm font-body">
-                      Join a community above to see it listed here and unlock member-exclusive movie discussions.
-                    </p>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </Skeleton>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+            >
+              {activeTab === 'Discover' && MOCK_CLUBS.map((club) => <ImmersiveCard key={club.id} club={club} />)}
+              {activeTab === 'Trending' && [...MOCK_CLUBS].reverse().map((club) => <ImmersiveCard key={club.id} club={club} />)}
+              {activeTab === 'Joined' && (
+                <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-surface-container/20 rounded-2xl ghost-border">
+                  <span className="text-5xl mb-4">✨</span>
+                  <h3 className="font-headline text-xl font-bold">No Clubs Joined</h3>
+                  <p className="text-on-surface-variant text-sm mt-2 max-w-sm font-body">
+                    Join a community above to see it listed here and unlock member-exclusive movie discussions.
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </main>
 
         {/* ── NEON DIVIDER ── */}

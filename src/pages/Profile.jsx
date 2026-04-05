@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
@@ -287,6 +287,7 @@ export default function Profile() {
       <AnimatePresence>
         {showSettings && (
           <SettingsModal 
+            session={session}
             onClose={() => setShowSettings(false)} 
             signOut={signOut} 
           />
@@ -325,8 +326,32 @@ function EmptyState({ type, onExplore }) {
   );
 }
 
-function SettingsModal({ onClose, signOut }) {
+function SettingsModal({ onClose, signOut, session }) {
   const [view, setView] = useState('main'); // 'main' or 'edit'
+  const [profileImage, setProfileImage] = useState(session?.user?.user_metadata?.avatar_url || null);
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = event.target.result;
+        setProfileImage(base64); // Instant local update
+
+        try {
+          await supabase.auth.updateUser({ data: { avatar_url: base64 } });
+        } catch (error) {
+          console.error("Error updating avatar:", error);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
   const [pushEnabled, setPushEnabled] = useState(true);
   const [privateEnabled, setPrivateEnabled] = useState(false);
   const [dataSaver, setDataSaver] = useState(false);
@@ -456,12 +481,25 @@ function SettingsModal({ onClose, signOut }) {
             <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
               {/* Profile Photo */}
               <div className="flex items-center gap-5 mb-8">
-                <div className="w-16 h-16 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center shadow-lg">
-                  <span className="font-headline text-xl font-bold">AS</span>
+                <div 
+                  onClick={handleUploadClick}
+                  className="w-16 h-16 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center shadow-lg overflow-hidden relative group cursor-pointer"
+                >
+                  {profileImage ? (
+                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover group-hover:opacity-70 transition-opacity" />
+                  ) : (
+                    <span className="font-headline text-xl font-bold">
+                      {profileForm.firstName ? profileForm.firstName.slice(0, 2).toUpperCase() : (session?.user?.user_metadata?.full_name?.slice(0, 2).toUpperCase() || 'AS')}
+                    </span>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="material-symbols-outlined text-white text-[20px]">upload</span>
+                  </div>
                 </div>
                 <div>
                   <p className="font-bold text-sm text-on-surface">Profile photo</p>
-                  <button className="text-xs text-primary mt-1 hover:underline font-medium">Upload a new profile photo</button>
+                  <button onClick={handleUploadClick} className="text-xs text-primary mt-1 hover:underline font-medium">Upload a new profile photo</button>
+                  <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
                 </div>
               </div>
 

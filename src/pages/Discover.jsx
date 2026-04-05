@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUpcomingMovies, fetchTrendingMovies, fetchTopRatedMovies, fetchMoviesByDirector, getGenreLabel, searchMovies } from '../services/tmdb';
-// import StitchLoader from '../components/StitchLoader';
-import { Skeleton } from 'boneyard-js';
+import StitchLoader from '../components/StitchLoader';
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
 
@@ -52,12 +51,11 @@ export default function Discover() {
       return;
     }
     
-    // Map custom editorial filters to TMDB Genre IDs
     const genreMap = {
-      'Cyberpunk': [878, 28],      // Sci-Fi, Action
-      'Neo-Noir': [80, 9648],      // Crime, Mystery
-      'Mumblecore': [18, 10749],   // Drama, Romance
-      'Surrealism': [14, 9648],    // Fantasy, Mystery
+      'Cyberpunk': [878, 28],
+      'Neo-Noir': [80, 9648],
+      'Mumblecore': [18, 10749],
+      'Surrealism': [14, 9648],
     };
 
     const fetchFiltered = async () => {
@@ -81,7 +79,7 @@ export default function Discover() {
       fetchUpcomingMovies(), 
       fetchTrendingMovies(), 
       fetchTopRatedMovies(),
-      fetchMoviesByDirector(12453) // 12453 = Wong Kar-Wai
+      fetchMoviesByDirector(12453)
     ])
       .then(([up, tr, top, wkw]) => {
         setUpcoming(up.slice(0, 10));
@@ -93,7 +91,7 @@ export default function Discover() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Removed if (loading) return <StitchLoader />
+  if (loading) return <StitchLoader vibeLabel="Loading Discover…" />;
 
 
   return (
@@ -275,7 +273,6 @@ export default function Discover() {
         </section>
 
         {/* ── 3. Director Spotlight (Wong Kar-Wai) ── */}
-        <Skeleton name="director-spotlight" color="#1a1a1a" animate={true} loading={loading}>
         <section className="px-4 lg:px-12 mb-20 w-full relative">
           <div className="absolute inset-0 pointer-events-none rounded-[3rem] opacity-20" 
                style={{ background: 'radial-gradient(ellipse at center, rgba(171,159,255,0.4) 0%, transparent 60%)' }} />
@@ -330,10 +327,8 @@ export default function Discover() {
             
           </div>
         </section>
-        </Skeleton>
 
         {/* ── 4. Bottom Grid (2-Column) ── */}
-        <Skeleton name="discover-bento" color="#1a1a1a" animate={true} loading={loading}>
         <section className="px-4 lg:px-12 mb-20 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           
           {/* Left Column: Trending in Clubs */}
@@ -386,7 +381,6 @@ export default function Discover() {
           </div>
 
         </section>
-        </Skeleton>
 
         </>
         )}
