@@ -9,7 +9,9 @@ import StitchLoader from '../components/StitchLoader';
 
 
 
-function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }) {
+import { forwardRef } from 'react';
+
+const HeroCard = forwardRef(({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }, ref) => {
   const navigate = useNavigate();
   const x = useMotionValue(0);
 
@@ -20,9 +22,7 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
   const greenOpacity = useTransform(x, [0, 150], [0, 0.8]);
   const redOpacity = useTransform(x, [0, -150], [0, 0.8]);
   const rotate = useTransform(x, [-200, 200], [-8, 8]);
-  const scaleFront = useTransform(x, [-200, 0, 200], [0.95, 1, 0.95]);
-  const scaleSecond = useTransform(x, [-200, 0, 200], [1, 0.95, 1]);
-  const opacitySecond = useTransform(x, [-200, 0, 200], [1, 0.5, 1]);
+  // We remove scaleFront, scaleSecond, opacitySecond as variants will handle the rest beautifully!
 
   const handleDragEnd = (_, info) => {
     if (info.offset.x > 100) onSwipeRight(movie);
@@ -31,8 +31,16 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
 
   const variants = {
     front:  { scale: 1, y: 0, opacity: 1, zIndex: 10 },
-    second: { scale: 0.95, y: 20, opacity: 0.5, zIndex: 5 },
+    second: { scale: 0.95, y: 20, opacity: 0.4, zIndex: 5 },
     hidden: { scale: 0.9, y: 40, opacity: 0, zIndex: 0 },
+    exit:   { scale: 0.9, opacity: 0, zIndex: -10, transition: { duration: 0.2 } },
+  };
+
+  const textVariants = {
+    front: { opacity: 1, transition: { delay: 0.1 } },
+    second: { opacity: 0 },
+    hidden: { opacity: 0 },
+    exit: { opacity: 0 },
   };
 
   let animationState = 'hidden';
@@ -40,7 +48,24 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
   else if (isSecond) animationState = 'second';
 
   return (
-    <>
+    <motion.div
+      ref={ref}
+      className="absolute inset-0 origin-bottom"
+      variants={variants}
+      initial="hidden"
+      animate={animationState}
+      exit="exit"
+      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      style={{
+        x: isFront ? x : 0,
+        rotate: isFront ? rotate : 0,
+        pointerEvents: isFront ? 'auto' : 'none',
+      }}
+      drag={isFront ? 'x' : false}
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      onDragEnd={handleDragEnd}
+      whileDrag={{ cursor: 'grabbing' }}
+    >
       {isFront && (
         <motion.div 
           className="fixed inset-0 z-[-1] pointer-events-none bg-cover bg-center transition-all duration-300"
@@ -52,105 +77,88 @@ function HeroCard({ movie, isFront, isSecond, onSwipeRight, onSwipeLeft, color }
         />
       )}
       
-      <motion.div
-        className="absolute inset-0 origin-bottom"
-        variants={variants}
-        initial="hidden"
-        animate={animationState}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        style={{
-          zIndex: isFront ? 10 : isSecond ? 5 : 0,
-          x: isFront ? x : 0,
-          rotate: isFront ? rotate : 0,
-          scale: isFront ? scaleFront : isSecond ? scaleSecond : 0.9,
-          opacity: isSecond && !isFront ? opacitySecond : undefined,
-          pointerEvents: isFront ? 'auto' : 'none',
-        }}
-        drag={isFront ? 'x' : false}
-        dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-        onDragEnd={handleDragEnd}
-        whileDrag={{ cursor: 'grabbing' }}
+      <div className="relative w-full h-full rounded-[32px] overflow-hidden stitch-card shadow-2xl"
+        style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.1), 0 30px 60px -15px ${color}50` }}
       >
-        <div className="relative w-full h-full rounded-[32px] overflow-hidden stitch-card shadow-2xl"
-          style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.1), 0 30px 60px -15px ${color}50` }}
+        {/* Mobile Vertical Poster */}
+        <img
+          src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
+          alt={movie.title}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none lg:hidden"
+        />
+        {/* Desktop Horizontal Cinematic Backdrop */}
+        <img
+          src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path || movie.poster_path}`}
+          alt={movie.title}
+          className="hidden lg:block absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10 pointer-events-none" />
+
+        {isFront && (
+          <>
+            <motion.div className="absolute inset-0 bg-green-500 mix-blend-multiply pointer-events-none" style={{ opacity: greenOpacity }} />
+            <motion.div className="absolute inset-0 bg-error mix-blend-multiply pointer-events-none" style={{ opacity: redOpacity }} />
+          </>
+        )}
+
+        {/* Neon Auteur Overlay */}
+        <motion.div 
+          variants={textVariants}
+          className="absolute bottom-8 left-6 right-6 pointer-events-none"
         >
-          {/* Mobile Vertical Poster */}
-          <img
-            src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
-            alt={movie.title}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none lg:hidden"
-          />
-          {/* Desktop Horizontal Cinematic Backdrop */}
-          <img
-            src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path || movie.poster_path}`}
-            alt={movie.title}
-            className="hidden lg:block absolute inset-0 w-full h-full object-cover pointer-events-none"
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10 pointer-events-none" />
-
-          {isFront && (
-            <>
-              <motion.div className="absolute inset-0 bg-green-500 mix-blend-multiply pointer-events-none" style={{ opacity: greenOpacity }} />
-              <motion.div className="absolute inset-0 bg-error mix-blend-multiply pointer-events-none" style={{ opacity: redOpacity }} />
-            </>
-          )}
-
-          {/* Neon Auteur Overlay */}
-          <div className="absolute bottom-8 left-6 right-6 pointer-events-none">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="px-2 py-0.5 rounded bg-white/10 text-white text-[10px] font-headline font-bold uppercase tracking-widest backdrop-blur-md ghost-border">
-                4K ULTRA HD
-              </span>
-              <span className="px-2 py-0.5 rounded bg-white/10 text-primary text-[10px] font-headline font-bold uppercase tracking-widest backdrop-blur-md ghost-border">
-                HDR
-              </span>
-            </div>
-            
-            <h2 className="font-headline text-3xl lg:text-5xl font-black leading-tight text-white mb-2 tracking-tighter uppercase whitespace-normal break-words">
-              {movie.title}
-            </h2>
-            
-            <p className="text-primary text-[10px] font-headline font-bold uppercase tracking-[0.2em] mb-4">
-              {movie.release_date?.slice(0, 4)} • SCI-FI NOIR • 142 MIN
-            </p>
-            
-            <p className="text-on-surface-variant text-sm line-clamp-2 max-w-[90%] font-body leading-relaxed mb-6">
-              {movie.overview}
-            </p>
-            
-            {/* Gesture Buttons */}
-            <div className="flex items-center gap-4 pointer-events-auto">
-              <button
-                onClick={(e) => { e.stopPropagation(); onSwipeLeft(); }}
-                className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border hover:bg-surface-container-high transition-colors"
-              >
-                <span className="material-symbols-outlined text-on-surface-variant text-2xl">close</span>
-              </button>
-              
-              <button
-                onClick={(e) => { e.stopPropagation(); onSwipeRight(movie); }}
-                className="w-16 h-16 rounded-2xl flex items-center justify-center bg-primary transition-transform active:scale-95"
-                style={{
-                  boxShadow: '0 0 40px rgba(255,138,169,0.5)',
-                }}
-              >
-                <span className="material-symbols-outlined text-on-primary-fixed text-3xl filled">favorite</span>
-              </button>
-              
-              <button
-                onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.id}`); }}
-                className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border hover:bg-surface-container-high transition-colors ml-auto"
-              >
-                <span className="material-symbols-outlined text-on-surface-variant text-2xl">info</span>
-              </button>
-            </div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="px-2 py-0.5 rounded bg-white/10 text-white text-[10px] font-headline font-bold uppercase tracking-widest backdrop-blur-md ghost-border">
+              4K ULTRA HD
+            </span>
+            <span className="px-2 py-0.5 rounded bg-white/10 text-primary text-[10px] font-headline font-bold uppercase tracking-widest backdrop-blur-md ghost-border">
+              HDR
+            </span>
           </div>
-        </div>
-      </motion.div>
-    </>
+          
+          <h2 className="font-headline text-3xl lg:text-5xl font-black leading-tight text-white mb-2 tracking-tighter uppercase whitespace-normal break-words">
+            {movie.title}
+          </h2>
+          
+          <p className="text-primary text-[10px] font-headline font-bold uppercase tracking-[0.2em] mb-4">
+            {movie.release_date?.slice(0, 4)} • SCI-FI NOIR • 142 MIN
+          </p>
+          
+          <p className="text-on-surface-variant text-sm line-clamp-2 max-w-[90%] font-body leading-relaxed mb-6">
+            {movie.overview}
+          </p>
+          
+          {/* Gesture Buttons */}
+          <div className="flex items-center gap-4 pointer-events-auto">
+            <button
+              onClick={(e) => { e.stopPropagation(); onSwipeLeft(); }}
+              className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border hover:bg-surface-container-high transition-colors"
+            >
+              <span className="material-symbols-outlined text-on-surface-variant text-2xl">close</span>
+            </button>
+            
+            <button
+              onClick={(e) => { e.stopPropagation(); onSwipeRight(movie); }}
+              className="w-16 h-16 rounded-2xl flex items-center justify-center bg-primary transition-transform active:scale-95"
+              style={{
+                boxShadow: '0 0 40px rgba(255,138,169,0.5)',
+              }}
+            >
+              <span className="material-symbols-outlined text-on-primary-fixed text-3xl filled">favorite</span>
+            </button>
+            
+            <button
+              onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.id}`); }}
+              className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border hover:bg-surface-container-high transition-colors ml-auto"
+            >
+              <span className="material-symbols-outlined text-on-surface-variant text-2xl">info</span>
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
   );
-}
+});
 
 export default function Feed() {
   const { session } = useAuth();
