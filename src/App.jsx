@@ -82,7 +82,8 @@ function MainLayout() {
   return (
     <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface transition-all duration-300">
       <TopNav />
-      <div className="pb-20 lg:pb-0">
+      {/* pb-24 = safe area for BottomNav on mobile; lg:pb-0 = desktop has no bottom nav */}
+      <div className="pt-14 lg:pt-16 pb-24 lg:pb-0">
         <AnimatedRoutes />
       </div>
       <BottomNav />

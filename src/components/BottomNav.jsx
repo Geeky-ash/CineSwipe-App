@@ -1,36 +1,81 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-const ICONS = [
-  { path: '/', icon: 'style', label: 'Swipe' },
-  { path: '/discover', icon: 'local_fire_department', label: 'Trending' },
-  { path: '/clubs', icon: 'groups', label: 'Clubs' },
-  { path: '/profile', icon: 'bookmark', label: 'Saved' },
-  { path: '/settings', icon: 'settings', label: 'Settings' },
+const TABS = [
+  { path: '/',         icon: 'swipe',        label: 'Swipe' },
+  { path: '/discover', icon: 'explore',      label: 'Discover' },
+  { path: '/clubs',    icon: 'movie_filter',  label: 'Film Clubs' },
+  { path: '/profile',  icon: 'person',       label: 'Profile' },
 ];
 
 export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hidden on desktop
   return (
-    <nav className="fixed lg:hidden bottom-0 left-0 right-0 z-50 px-4 pb-safe pb-4 pt-2 glass-panel ghost-border rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
-      <div className="flex justify-around items-center h-14">
-        {ICONS.map((item) => {
-          const active = location.pathname === item.path;
+    <nav
+      className="fixed lg:hidden bottom-0 left-0 right-0 z-50"
+      style={{
+        /* Stitch tokens: #000000 @ 60%, blur 24px, tonal top edge */
+        background: 'rgba(0, 0, 0, 0.60)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        boxShadow: '0 -1px 0 rgba(255, 138, 169, 0.06), 0 -8px 24px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      <div
+        className="flex justify-around items-end px-2 pt-2"
+        style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+      >
+        {TABS.map((tab) => {
+          const active =
+            tab.path === '/'
+              ? location.pathname === '/'
+              : location.pathname.startsWith(tab.path);
+
           return (
             <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className="group relative flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all"
+              key={tab.path}
+              onClick={() => navigate(tab.path)}
+              className="relative flex flex-col items-center gap-0.5 min-w-[64px] py-1 transition-all active:scale-90"
             >
-              <div className={`absolute inset-0 rounded-2xl transition-all duration-300 ${
-                active ? 'bg-primary/20 scale-100' : 'bg-transparent scale-50 opacity-0 opacity-100'
-              }`} />
-              <span className={`material-symbols-outlined relative z-10 transition-colors duration-300 ${
-                active ? 'text-primary filled drop-shadow-[0_0_8px_rgba(255,138,169,0.8)]' : 'text-on-surface-variant'
-              }`}>
-                {item.icon}
+              {/* Active pill glow */}
+              {active && (
+                <motion.div
+                  layoutId="bottomNavPill"
+                  className="absolute -top-0.5 w-14 h-8 rounded-full"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,138,169,0.22), rgba(228,0,108,0.12))',
+                    boxShadow: '0 0 18px rgba(255, 138, 169, 0.30)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                />
+              )}
+
+              {/* Icon */}
+              <span
+                className={`material-symbols-outlined relative z-10 transition-all duration-200 ${
+                  active ? 'filled text-[24px]' : 'text-[22px]'
+                }`}
+                style={{
+                  color: active
+                    ? 'var(--color-primary)'         /* #ff8aa9 */
+                    : 'var(--color-on-surface-variant)',
+                  filter: active
+                    ? 'drop-shadow(0 0 6px rgba(255,138,169,0.7))'
+                    : 'none',
+                }}
+              >
+                {tab.icon}
+              </span>
+
+              {/* Label */}
+              <span
+                className={`relative z-10 text-[10px] leading-tight tracking-wide font-semibold transition-colors duration-200 ${
+                  active ? 'text-primary' : 'text-on-surface-variant'
+                }`}
+              >
+                {tab.label}
               </span>
             </button>
           );
