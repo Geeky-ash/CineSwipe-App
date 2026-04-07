@@ -79,11 +79,15 @@ function AnimatedRoutes() {
 }
 
 function MainLayout() {
+  const location = useLocation();
+  const isMovieDetails = location.pathname.startsWith('/movie/');
+
   return (
     <div className="w-full min-h-[100dvh] bg-surface-container-lowest text-on-surface transition-all duration-300">
       <TopNav />
-      {/* pb-24 = safe area for BottomNav on mobile; lg:pb-0 = desktop has no bottom nav */}
-      <div className="pt-14 lg:pt-16 pb-24 lg:pb-0">
+      {/* On movie details, no top padding — backdrop extends behind transparent navbar.
+          On all other routes, standard top padding for the fixed navbar. */}
+      <div className={`${isMovieDetails ? 'pt-0' : 'pt-14 lg:pt-16'} pb-24 lg:pb-0`}>
         <AnimatedRoutes />
       </div>
       <BottomNav />

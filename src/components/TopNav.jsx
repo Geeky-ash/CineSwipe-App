@@ -15,6 +15,9 @@ export default function TopNav() {
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Detect movie details route for transparent navbar treatment
+  const isMovieDetails = location.pathname.startsWith('/movie/');
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -34,8 +37,12 @@ export default function TopNav() {
           Transparent / subtle blur — logo left, actions right
           ═══════════════════════════════════════════════════════════════════ */}
       <nav
-        className="fixed top-0 left-0 right-0 z-[100] lg:hidden flex items-center justify-between px-4 py-3"
-        style={{
+        className="fixed top-0 left-0 right-0 z-[100] lg:hidden flex items-center justify-between px-4 py-3 transition-all duration-300"
+        style={isMovieDetails ? {
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), transparent)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+        } : {
           background: 'rgba(0, 0, 0, 0.15)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
@@ -121,8 +128,12 @@ export default function TopNav() {
           Glassmorphic with tab pills + actions
           ═══════════════════════════════════════════════════════════════════ */}
       <nav
-        className="fixed top-0 left-0 right-0 z-[100] hidden lg:block px-4 py-3"
-        style={{
+        className="fixed top-0 left-0 right-0 z-[100] hidden lg:block px-4 py-3 transition-all duration-300"
+        style={isMovieDetails ? {
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), transparent)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+        } : {
           background: 'rgba(38, 38, 38, 0.4)',
           backdropFilter: 'blur(32px)',
           WebkitBackdropFilter: 'blur(32px)',
