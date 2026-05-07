@@ -516,6 +516,7 @@ export default function MovieDetails() {
           <img
             src={`${IMAGE_BASE}${movie.backdrop_path}`}
             alt={movie.title}
+            loading="lazy"
             className="w-full h-full object-cover object-top"
           />
         ) : (
@@ -564,7 +565,7 @@ export default function MovieDetails() {
           <div className="w-32 md:w-48 shrink-0 rounded-xl overflow-hidden inner-glow hidden sm:block"
             style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}
           >
-            <img src={`${POSTER_BASE}${movie.poster_path}`} alt={movie.title} className="w-full h-auto" />
+            <img src={`${POSTER_BASE}${movie.poster_path}`} alt={movie.title} loading="lazy" className="w-full h-auto" />
           </div>
 
           <div className="flex-1">
@@ -611,7 +612,7 @@ export default function MovieDetails() {
                   <div key={person.id} className="flex-shrink-0 w-24 flex flex-col items-center relative">
                     <div className="w-20 h-20 rounded-full overflow-hidden mb-2 bg-surface-container-high ghost-border relative">
                       {person.profile_path ? (
-                        <img src={`${POSTER_BASE}${person.profile_path}`} className="w-full h-full object-cover" alt={person.name} />
+                        <img src={`${POSTER_BASE}${person.profile_path}`} className="w-full h-full object-cover" alt={person.name} loading="lazy" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <span className="material-symbols-outlined text-outline">person</span>

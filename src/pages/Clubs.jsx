@@ -48,7 +48,7 @@ function ImmersiveCard({ club }) {
 
   return (
     <div className="relative group rounded-2xl overflow-hidden stitch-card cursor-pointer min-h-[220px]">
-      <img src={club.backdrop} alt={club.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70" />
+      <img src={club.backdrop} alt={club.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
       <div className="absolute inset-0" style={{ background: 'rgba(38, 38, 38, 0.4)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }} />
 
@@ -198,7 +198,7 @@ export default function Clubs() {
               {SUGGESTED_FRIENDS.map((user) => (
                 <div key={user.id} className="flex items-center justify-between group cursor-pointer">
                   <div className="flex items-center gap-3">
-                    <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full bg-surface-container-highest ghost-border group-hover:shadow-[inset_0_0_0_1px_rgba(255,138,169,0.5)] transition-all" />
+                    <img src={user.avatar} alt={user.name} loading="lazy" className="w-10 h-10 rounded-full bg-surface-container-highest ghost-border group-hover:shadow-[inset_0_0_0_1px_rgba(255,138,169,0.5)] transition-all" />
                     <div>
                       <p className="font-bold text-sm text-on-surface font-body">{user.name}</p>
                       <p className="text-[10px] font-label font-bold text-tertiary uppercase tracking-wider">{user.sharedTaste}</p>

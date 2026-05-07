@@ -84,12 +84,14 @@ const HeroCard = forwardRef(({ movie, isFront, isSecond, onSwipeRight, onSwipeLe
         <img
           src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
           alt={movie.title}
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover pointer-events-none lg:hidden"
         />
         {/* Desktop Horizontal Cinematic Backdrop */}
         <img
           src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path || movie.poster_path}`}
           alt={movie.title}
+          loading="lazy"
           className="hidden lg:block absolute inset-0 w-full h-full object-cover pointer-events-none"
         />
 
@@ -132,7 +134,7 @@ const HeroCard = forwardRef(({ movie, isFront, isSecond, onSwipeRight, onSwipeLe
           <div className="flex items-center gap-4 pointer-events-auto">
             <button
               onClick={(e) => { e.stopPropagation(); onSwipeLeft(); }}
-              className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border hover:bg-surface-container-high transition-colors"
+              className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border active:bg-surface-container-high transition-colors"
             >
               <span className="material-symbols-outlined text-on-surface-variant text-2xl">close</span>
             </button>
@@ -149,7 +151,7 @@ const HeroCard = forwardRef(({ movie, isFront, isSecond, onSwipeRight, onSwipeLe
             
             <button
               onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.id}`); }}
-              className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border hover:bg-surface-container-high transition-colors ml-auto"
+              className="w-14 h-14 rounded-2xl glass-panel flex items-center justify-center ghost-border active:bg-surface-container-high transition-colors ml-auto"
             >
               <span className="material-symbols-outlined text-on-surface-variant text-2xl">info</span>
             </button>

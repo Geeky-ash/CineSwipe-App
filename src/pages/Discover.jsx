@@ -138,6 +138,7 @@ export default function Discover() {
                   {movie.poster_path ? (
                     <img
                       alt={movie.title}
+                      loading="lazy"
                       className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-500"
                       src={`${POSTER_BASE}${movie.poster_path}`}
                     />
@@ -205,6 +206,7 @@ export default function Discover() {
                     {movie.poster_path ? (
                       <img
                         alt={movie.title}
+                        loading="lazy"
                         className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-500"
                         src={`${POSTER_BASE}${movie.poster_path}`}
                       />
@@ -247,6 +249,7 @@ export default function Discover() {
                 <img 
                   src={`${POSTER_BASE}${movie.poster_path}`} 
                   alt={movie.title}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 
@@ -310,6 +313,7 @@ export default function Discover() {
                   <img 
                     src={`${POSTER_BASE}${movie.poster_path}`} 
                     alt={movie.title}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
@@ -362,7 +366,7 @@ export default function Discover() {
               {topRated.map((movie) => (
                 <div key={movie.id} onClick={() => navigate(`/movie/${movie.id}`)} className="flex items-center gap-5 group cursor-pointer w-full p-2 rounded-xl hover:bg-surface-container/50 transition-colors">
                   <div className="w-16 h-[72px] shrink-0 rounded-lg overflow-hidden shadow-md">
-                    <img src={`${POSTER_BASE}${movie.poster_path}`} alt={movie.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                    <img src={`${POSTER_BASE}${movie.poster_path}`} alt={movie.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">

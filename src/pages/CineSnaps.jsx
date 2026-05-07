@@ -21,6 +21,7 @@ function ReelVideo({ trailerKey, muted, posterPath }) {
       <img
         src={POSTER}
         alt="poster"
+        loading="lazy"
         className="absolute inset-0 w-full h-full object-cover"
       />
     );
@@ -179,6 +180,7 @@ function ReelCard({ movie, isActive, onSave, onToggleMute, muted }) {
           <img
             src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
             alt={movie.title}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         </div>
