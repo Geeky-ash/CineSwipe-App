@@ -38,14 +38,17 @@ export default function TopNav() {
           ═══════════════════════════════════════════════════════════════════ */}
       <nav
         className="fixed top-0 left-0 right-0 z-[100] lg:hidden flex items-center justify-between px-4 py-3 transition-all duration-300"
-        style={isMovieDetails ? {
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), transparent)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-        } : {
-          background: 'rgba(0, 0, 0, 0.15)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+        style={{
+          paddingTop: 'max(12px, env(safe-area-inset-top))',
+          ...(isMovieDetails ? {
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), transparent)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+          } : {
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+          }),
         }}
       >
         {/* Logo */}
